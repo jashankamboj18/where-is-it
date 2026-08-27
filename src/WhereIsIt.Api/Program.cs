@@ -16,19 +16,27 @@ using WhereIsIt.Shared.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add Database Context with SQL Server
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") 
-    ?? "Server=VF-BALVINDER-HO;Database=WhereIsItDb;Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=true;";
+// Add Database Context (Auto-detects SQL Server or cloud SQLite)
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+var isSqlServer = !string.IsNullOrEmpty(connectionString) && (connectionString.Contains("Server=") || connectionString.Contains("database.windows.net") || connectionString.Contains("Trusted_Connection="));
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
-    options.UseSqlServer(connectionString, sqlOptions =>
+    if (isSqlServer)
     {
-        sqlOptions.EnableRetryOnFailure(
-            maxRetryCount: 5,
-            maxRetryDelay: TimeSpan.FromSeconds(30),
-            errorNumbersToAdd: null);
-    });
+        options.UseSqlServer(connectionString!, sqlOptions =>
+        {
+            sqlOptions.EnableRetryOnFailure(
+                maxRetryCount: 5,
+                maxRetryDelay: TimeSpan.FromSeconds(30),
+                errorNumbersToAdd: null);
+        });
+    }
+    else
+    {
+        var dbPath = Path.Combine(AppContext.BaseDirectory, "WhereIsIt.db");
+        options.UseSqlite($"Data Source={dbPath}");
+    }
 });
 
 // Configure JWT Authentication
@@ -102,7 +110,14 @@ using (var scope = app.Services.CreateScope())
     try
     {
         var context = services.GetRequiredService<AppDbContext>();
-        context.Database.Migrate();
+        if (context.Database.IsSqlite())
+        {
+            context.Database.EnsureCreated();
+        }
+        else
+        {
+            context.Database.Migrate();
+        }
         DatabaseSeeder.SeedAsync(context).GetAwaiter().GetResult();
     }
     catch (Exception ex)
