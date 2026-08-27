@@ -3,6 +3,9 @@
 > **Never forget where you kept something again.**  
 > A smart home & office possession tracker powered by a multilingual Siri-like Voice AI ("Hey Finder"), QR-code container management, everyday carry checklists, and cross-platform web & Android apps.
 
+[![Download Android APK](https://img.shields.io/badge/Download-Android_APK-green?style=for-the-badge&logo=android)](https://github.com/jashankamboj18/where-is-it/releases/download/latest-apk/WhereIsIt-FinderAI.apk)
+[![Live Web App](https://img.shields.io/badge/Live_App-Render-blue?style=for-the-badge&logo=render)](https://where-is-it.onrender.com)
+
 ---
 
 ## ✨ Features

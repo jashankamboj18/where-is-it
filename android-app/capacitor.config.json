@@ -3,17 +3,11 @@
   "appName": "WHERE IS IT",
   "webDir": "../src/WhereIsIt.Api/wwwroot",
   "server": {
-    "androidScheme": "http",
-    "url": "http://10.0.2.2:5030",
+    "androidScheme": "https",
     "cleartext": true,
     "allowNavigation": ["*"]
   },
   "android": {
-    "buildOptions": {
-      "keystorePath": "keystore/whereisit.keystore",
-      "keystoreAlias": "whereisit",
-      "releaseType": "APK"
-    },
     "minWebViewVersion": 60,
     "backgroundColor": "#0F172A",
     "useLegacyBridge": false,

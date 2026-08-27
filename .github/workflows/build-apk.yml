@@ -1,0 +1,90 @@
+name: Build & Publish Android APK
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-apk:
+    name: Build Android APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: android-app/package-lock.json
+
+      - name: Set up Java JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Capacitor Dependencies
+        run: |
+          cd android-app
+          npm install
+
+      - name: Sync Capacitor Android Project
+        run: |
+          cd android-app
+          npx cap sync android
+
+      - name: Make Gradlew Executable
+        run: chmod +x android-app/android/gradlew
+
+      - name: Build Android Debug APK
+        run: |
+          cd android-app/android
+          ./gradlew assembleDebug --no-daemon --stacktrace
+
+      - name: Copy & Name APK Artifact
+        run: |
+          mkdir -p build-output
+          cp android-app/android/app/build/outputs/apk/debug/app-debug.apk build-output/WhereIsIt-FinderAI.apk
+          cp android-app/android/app/build/outputs/apk/debug/app-debug.apk WhereIsIt-FinderAI.apk
+
+      - name: Upload APK as Workflow Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: WhereIsIt-FinderAI-APK
+          path: build-output/WhereIsIt-FinderAI.apk
+          retention-days: 90
+
+      - name: Publish Direct Download APK Release
+        uses: softprops/action-gh-release@v2
+        if: github.ref == 'refs/heads/main'
+        with:
+          tag_name: latest-apk
+          name: "WHERE IS IT — Finder AI Android App (Latest APK)"
+          body: |
+            ## 📱 WHERE IS IT — Finder AI Android APK
+            
+            This is the automatically generated Android APK build for **WHERE IS IT — Finder AI**.
+            
+            ### ⬇️ Direct Download Link:
+            👉 **[Download WhereIsIt-FinderAI.apk](https://github.com/${{ github.repository }}/releases/download/latest-apk/WhereIsIt-FinderAI.apk)**
+            
+            ---
+            - **Commit**: `${{ github.sha }}`
+            - **Branch**: `${{ github.ref_name }}`
+            - **Auto-Built by**: GitHub Actions CI/CD
+          draft: false
+          prerelease: false
+          files: WhereIsIt-FinderAI.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
