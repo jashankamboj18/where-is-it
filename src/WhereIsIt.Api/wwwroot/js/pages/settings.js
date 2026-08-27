@@ -23,12 +23,17 @@ function renderSettingsView() {
                 </h3>
                 <div class="settings-row">
                     <div class="settings-row-info">
-                        <strong>${user.fullName || user.firstName || 'Balvinder Singh'}</strong>
-                        <span>${user.email || 'balvinder@whereisit.local'}</span>
+                        <strong>${user.fullName || user.firstName || 'User Account'}</strong>
+                        <span>${user.email || 'Free Tier Account'}</span>
                     </div>
-                    <button class="btn btn-secondary btn-sm" onclick="openEditProfileModal()">
-                        <span class="material-symbols-outlined">edit</span> Edit Profile
-                    </button>
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                        <button class="btn btn-secondary btn-sm" onclick="openEditProfileModal()">
+                            <span class="material-symbols-outlined">edit</span> Edit Profile
+                        </button>
+                        <button class="btn btn-secondary btn-sm" style="color: #E11D48;" onclick="logoutUser()">
+                            <span class="material-symbols-outlined">logout</span> Sign Out
+                        </button>
+                    </div>
                 </div>
                 <div class="settings-row">
                     <div class="settings-row-info">

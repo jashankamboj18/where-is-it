@@ -1242,6 +1242,64 @@
         </div>
     </div>
 
+    <!-- ==================== AUTHENTICATION (LOGIN / SIGN UP) MODAL ==================== -->
+    <div class="modal-backdrop" id="modal-auth">
+        <div class="modal-sheet auth-sheet">
+            <div class="auth-header-hero">
+                <div class="auth-icon-circle">
+                    <span class="material-symbols-outlined">account_circle</span>
+                </div>
+                <h3 id="auth-modal-title">Welcome to WHERE IS IT</h3>
+                <p id="auth-modal-desc">Create your free account or sign in to sync your inventory across all your devices.</p>
+            </div>
+
+            <!-- Tab Switcher -->
+            <div class="auth-tab-switch">
+                <button type="button" class="auth-tab-btn active" id="auth-tab-login">Sign In</button>
+                <button type="button" class="auth-tab-btn" id="auth-tab-register">Create Account</button>
+            </div>
+
+            <!-- Sign In Form -->
+            <form id="form-auth-login">
+                <div class="form-field">
+                    <label>Email Address</label>
+                    <input type="email" id="auth-login-email" placeholder="you@example.com" required autocomplete="email">
+                </div>
+                <div class="form-field">
+                    <label>Password</label>
+                    <input type="password" id="auth-login-password" placeholder="••••••••" required autocomplete="current-password">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px; padding: 12px; justify-content: center;">Sign In to My Account</button>
+            </form>
+
+            <!-- Register Form -->
+            <form id="form-auth-register" style="display: none;">
+                <div class="form-row-2">
+                    <div class="form-field">
+                        <label>First Name</label>
+                        <input type="text" id="auth-reg-firstname" placeholder="Jashan" required autocomplete="given-name">
+                    </div>
+                    <div class="form-field">
+                        <label>Last Name</label>
+                        <input type="text" id="auth-reg-lastname" placeholder="Kamboj" autocomplete="family-name">
+                    </div>
+                </div>
+                <div class="form-field">
+                    <label>Email Address</label>
+                    <input type="email" id="auth-reg-email" placeholder="you@example.com" required autocomplete="email">
+                </div>
+                <div class="form-field">
+                    <label>Create Password</label>
+                    <input type="password" id="auth-reg-password" placeholder="Minimum 6 characters" required autocomplete="new-password">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px; padding: 12px; justify-content: center;">Create Free Account</button>
+            </form>
+
+            <div class="auth-guest-option">
+                <button type="button" class="auth-guest-btn" id="btn-auth-guest">Continue as Guest / Offline</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Mobile Bottom Navigation Bar -->
     <nav class="mobile-bottom-nav" id="mobile-bottom-nav">
