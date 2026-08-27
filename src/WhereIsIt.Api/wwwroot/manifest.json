@@ -1,0 +1,61 @@
+{
+  "name": "WHERE IS IT — Finder AI",
+  "short_name": "WhereIsIt",
+  "start_url": "/",
+  "id": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#2563EB",
+  "background_color": "#0F172A",
+  "description": "Never forget where you kept something again. Multilingual Siri-like voice inventory assistant.",
+  "categories": ["utilities", "productivity", "lifestyle"],
+  "icons": [
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Hey Finder 🎙️",
+      "short_name": "Finder AI",
+      "description": "Speak to locate or save your items",
+      "url": "/?action=voice",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Scan QR Code 📷",
+      "short_name": "Scan QR",
+      "description": "Scan box or container QR code",
+      "url": "/?action=scan",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Everyday Carry (EDC) 🎒",
+      "short_name": "Daily Carry",
+      "description": "Check daily essentials packing list",
+      "url": "/?action=routine",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}

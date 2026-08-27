@@ -1,0 +1,36 @@
+{
+  "appId": "com.whereisit.finderai",
+  "appName": "WHERE IS IT",
+  "webDir": "../src/WhereIsIt.Api/wwwroot",
+  "server": {
+    "androidScheme": "http",
+    "url": "http://10.0.2.2:5030",
+    "cleartext": true,
+    "allowNavigation": ["*"]
+  },
+  "android": {
+    "buildOptions": {
+      "keystorePath": "keystore/whereisit.keystore",
+      "keystoreAlias": "whereisit",
+      "releaseType": "APK"
+    },
+    "minWebViewVersion": 60,
+    "backgroundColor": "#0F172A",
+    "useLegacyBridge": false,
+    "windowSoftInputMode": "adjustResize",
+    "allowMixedContent": true
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 2000,
+      "backgroundColor": "#0F172A",
+      "androidSplashResourceName": "splash",
+      "showSpinner": true,
+      "spinnerColor": "#2563EB"
+    },
+    "StatusBar": {
+      "style": "DARK",
+      "backgroundColor": "#2563EB"
+    }
+  }
+}

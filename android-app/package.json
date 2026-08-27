@@ -1,0 +1,14 @@
+{
+  "name": "where-is-it",
+  "version": "2.0.0",
+  "description": "WHERE IS IT — Finder AI Android App",
+  "main": "index.js",
+  "scripts": {
+    "build:apk": "node build-apk.js"
+  },
+  "dependencies": {
+    "@capacitor/android": "^6.0.0",
+    "@capacitor/cli": "^6.0.0",
+    "@capacitor/core": "^6.0.0"
+  }
+}

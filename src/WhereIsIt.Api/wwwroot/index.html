@@ -1,0 +1,1302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>WHERE IS IT — Finder AI | Smart Home Inventory</title>
+    <meta name="description" content="Never forget where you kept something again. Multilingual Siri-like Voice AI home inventory assistant. Find anything in seconds.">
+
+    <!-- Android PWA & Install Meta Tags -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="WhereIsIt">
+    <meta name="theme-color" content="#2563EB">
+    <meta name="application-name" content="WHERE IS IT — Finder AI">
+    <link rel="icon" type="image/svg+xml" href="/icons/icon.svg">
+    <link rel="apple-touch-icon" href="/icons/icon-192.png">
+    
+    <!-- Google Fonts: Inter & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <!-- Modular CSS -->
+    <link rel="stylesheet" href="/css/tokens.css">
+    <link rel="stylesheet" href="/css/layout.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <link rel="stylesheet" href="/css/modals.css">
+    <link rel="stylesheet" href="/css/voice.css">
+    <link rel="stylesheet" href="/css/pwa.css">
+    <link rel="stylesheet" href="/css/mobile.css">
+    <link rel="stylesheet" href="/css/profile.css">
+</head>
+<body class="light-theme">
+    <div id="app" class="app-root">
+        <!-- Modern Collapsible Sidebar -->
+        <aside class="app-sidebar" id="app-sidebar">
+            <div class="sidebar-header">
+                <div class="brand-badge">
+                    <div class="brand-logo-icon">
+                        <span class="material-symbols-outlined">explore</span>
+                    </div>
+                    <div class="brand-info">
+                        <span class="brand-title">WhereIsIt</span>
+                        <span class="brand-subtitle">Inventory Engine</span>
+                    </div>
+                </div>
+                <button class="icon-btn sidebar-close-btn" id="mobile-sidebar-close" aria-label="Close Sidebar">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+
+            <!-- Active Premise Switcher Box -->
+            <div class="sidebar-place-box">
+                <div class="place-box-label">CURRENT PHYSICAL PREMISE</div>
+                <div class="place-select-custom">
+                    <span class="material-symbols-outlined place-icon">home_work</span>
+                    <select id="active-place-select" title="Active Place">
+                        <option value="">Loading Premises...</option>
+                    </select>
+                    <span class="material-symbols-outlined chevron-icon">expand_more</span>
+                </div>
+            </div>
+
+            <!-- Navigation Sections -->
+            <div class="sidebar-scroll-content">
+                <div class="nav-group-title">MAIN WORKSPACE</div>
+                <nav class="sidebar-nav">
+                    <button class="nav-btn active" data-tab="dashboard" id="nav-dashboard">
+                        <span class="material-symbols-outlined">space_dashboard</span>
+                        <span class="nav-text">Dashboard</span>
+                    </button>
+                    <button class="nav-btn" data-tab="items" id="nav-items">
+                        <span class="material-symbols-outlined">inventory_2</span>
+                        <span class="nav-text">All Possessions</span>
+                        <span class="nav-pill" id="badge-items-count">0</span>
+                    </button>
+                    <button class="nav-btn" data-tab="routine" id="nav-routine">
+                        <span class="material-symbols-outlined">fact_check</span>
+                        <span class="nav-text">Daily Carry (EDC)</span>
+                        <span class="nav-pill pill-success" id="badge-routine-count">8</span>
+                    </button>
+                    <button class="nav-btn" data-tab="lent" id="nav-lent">
+                        <span class="material-symbols-outlined">handshake</span>
+                        <span class="nav-text">Lent & Borrowed</span>
+                        <span class="nav-pill" id="badge-lent-count">0</span>
+                    </button>
+                    <button class="nav-btn" data-tab="trips" id="nav-trips">
+                        <span class="material-symbols-outlined">luggage</span>
+                        <span class="nav-text">Trips & Packing Lists</span>
+                    </button>
+                </nav>
+
+                <div class="nav-group-title mt-4">ORGANIZATION & ASSETS</div>
+                <nav class="sidebar-nav">
+                    <button class="nav-btn" data-tab="locations" id="nav-locations">
+                        <span class="material-symbols-outlined">account_tree</span>
+                        <span class="nav-text">Location Hierarchy</span>
+                    </button>
+                    <button class="nav-btn" data-tab="containers" id="nav-containers">
+                        <span class="material-symbols-outlined">all_inbox</span>
+                        <span class="nav-text">Containers & QR</span>
+                        <span class="nav-pill" id="badge-containers-count">0</span>
+                    </button>
+                    <button class="nav-btn" data-tab="valuation" id="nav-valuation">
+                        <span class="material-symbols-outlined">analytics</span>
+                        <span class="nav-text">Insurance & Net Worth</span>
+                    </button>
+                    <button class="nav-btn" data-tab="reminders" id="nav-reminders">
+                        <span class="material-symbols-outlined">notifications_active</span>
+                        <span class="nav-text">Warranties & Alerts</span>
+                        <span class="nav-pill pill-warning" id="badge-reminders-count">0</span>
+                    </button>
+                </nav>
+
+                <div class="nav-group-title mt-4">ACCOUNT</div>
+                <nav class="sidebar-nav">
+                    <button class="nav-btn" data-tab="profile" id="nav-profile">
+                        <span class="material-symbols-outlined">person</span>
+                        <span class="nav-text">My Profile</span>
+                    </button>
+                    <button class="nav-btn" data-tab="settings" id="nav-settings">
+                        <span class="material-symbols-outlined">settings</span>
+                        <span class="nav-text">Settings</span>
+                    </button>
+                </nav>
+            </div>
+
+            <!-- Sidebar Bottom User Profile Card -->
+            <div class="sidebar-footer">
+                <div class="sidebar-user-card" id="sidebar-user-card" onclick="document.getElementById('nav-profile').click()" title="View Profile">
+                    <div class="sidebar-user-avatar" id="sidebar-user-avatar">B</div>
+                    <div class="sidebar-user-info">
+                        <div class="sidebar-user-name" id="sidebar-user-name">Balvinder Singh</div>
+                        <div class="sidebar-user-sub"><span class="status-dot-online"></span> Cloud Synced</div>
+                    </div>
+                    <button class="sidebar-settings-quick-btn" onclick="event.stopPropagation(); document.getElementById('nav-settings').click();" title="Settings" aria-label="Settings">
+                        <span class="material-symbols-outlined">settings</span>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Sidebar Backdrop (Mobile) -->
+        <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+
+        <!-- Main Viewport -->
+        <main class="app-main">
+            <!-- Modern Header Bar -->
+            <header class="app-header">
+                <div class="header-left">
+                    <button class="icon-btn mobile-toggle-btn" id="mobile-menu-btn" aria-label="Toggle Menu">
+                        <span class="material-symbols-outlined">menu</span>
+                    </button>
+                    <!-- Global Command Search Input -->
+                    <div class="command-search-bar">
+                        <span class="material-symbols-outlined search-prefix-icon">search</span>
+                        <input type="text" id="global-search-input" placeholder="Ask AI: 'Where is my passport?', 'What's in garage?', 'Expiring items'..." autocomplete="off">
+                        <div class="search-actions-group">
+                            <button class="search-action-icon" id="btn-voice-search" title="Voice Search (Speak)">
+                                <span class="material-symbols-outlined">mic</span>
+                            </button>
+                            <span class="kbd-shortcut">Ctrl+K</span>
+                            <button class="search-action-icon search-clear" id="clear-search-btn" style="display: none;" title="Clear">
+                                <span class="material-symbols-outlined">close</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="header-right">
+                    <!-- Hey Finder Voice Assistant Button -->
+                    <button class="voice-agent-header-btn" id="btn-open-voice-agent" title="Talk to Finder AI (Voice Assistant)">
+                        <span class="material-symbols-outlined siri-sparkle">auto_awesome</span>
+                        <span class="voice-btn-label">Hey Finder 🎙️</span>
+                    </button>
+
+                    <!-- Install Android App Button (hidden until PWA install is available) -->
+                    <button class="btn-install-pwa" id="btn-install-pwa" title="Install as Android App" style="display:none;">
+                        <span class="material-symbols-outlined">install_mobile</span>
+                        <span>Install App</span>
+                    </button>
+
+                    <!-- Theme Toggle -->
+                    <button class="theme-switch-btn" id="btn-theme-toggle" title="Switch Theme">
+                        <span class="material-symbols-outlined" id="theme-icon">dark_mode</span>
+                        <span class="theme-text" id="theme-label">Dark</span>
+                    </button>
+
+                    <!-- Add Item CTA -->
+                    <button class="btn btn-primary" id="btn-add-item-top">
+                        <span class="material-symbols-outlined">add</span>
+                        <span>Record Item</span>
+                    </button>
+
+                    <!-- User Profile Dropdown -->
+                    <div class="profile-pill" id="user-menu-btn">
+                        <div class="user-avatar-circle" id="user-avatar-initials">B</div>
+                        <span class="user-name-label" id="user-display-name">Balvinder</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Sidebar Overlay (closes sidebar on mobile) -->
+            <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+            <!-- Android PWA Install Banner -->
+            <div id="pwa-install-banner" style="display:none;">
+                <div class="pwa-banner-content">
+                    <img src="/icons/icon-192.png" alt="WhereIsIt" class="pwa-banner-icon">
+                    <div class="pwa-banner-text">
+                        <strong>Install WHERE IS IT</strong>
+                        <span>Add to Home Screen — works offline!</span>
+                    </div>
+                    <button class="pwa-banner-install-btn" id="pwa-banner-install-btn">
+                        <span class="material-symbols-outlined">install_mobile</span>
+                        Install
+                    </button>
+                    <button class="pwa-banner-dismiss-btn" id="pwa-banner-dismiss-btn" title="Dismiss">
+                        <span class="material-symbols-outlined">close</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Main Body Container -->
+            <div class="app-content-container">
+                <!-- SMART SEARCH RESULTS OVERLAY VIEW -->
+                <section id="view-search-results" class="view-panel" style="display: none;">
+                    <div class="view-header">
+                        <div class="view-title-wrap">
+                            <h2>Instant Search & AI Query Results</h2>
+                            <p class="text-secondary" id="search-query-feedback">Showing relevant matches across all rooms and containers</p>
+                        </div>
+                        <button class="btn btn-secondary btn-sm" id="btn-close-search">
+                            <span class="material-symbols-outlined">arrow_back</span>
+                            <span>Back to View</span>
+                        </button>
+                    </div>
+                    <div id="search-results-container" class="item-cards-grid mt-4"></div>
+                </section>
+
+                <!-- 1. DASHBOARD VIEW -->
+                <section id="view-dashboard" class="view-panel active">
+                    <!-- Hero Summary Banner -->
+                    <div class="dashboard-hero-card">
+                        <div class="hero-content">
+                            <div class="hero-pill">
+                                <span class="pulse-sparkle"></span>
+                                <span>Zero-Effort Location Memory</span>
+                            </div>
+                            <h2>Where is your item kept right now?</h2>
+                            <p>Never search through drawers or cupboards aimlessly again. Ask natural questions or tap any daily essential below to find its exact location in seconds.</p>
+                            
+                            <!-- Search Suggestion Chips -->
+                            <div class="quick-suggest-row">
+                                <span class="suggest-label">Try searching:</span>
+                                <button class="suggest-chip" data-search="passport">🛂 Passport</button>
+                                <button class="suggest-chip" data-search="charger">⚡ MacBook Charger</button>
+                                <button class="suggest-chip" data-search="keys">🔑 House Keys</button>
+                                <button class="suggest-chip" data-search="remote">📺 AC Remote</button>
+                                <button class="suggest-chip" data-search="warranty">🛡️ Warranty Documents</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Daily Routine Checklist Widget (EDC - Everyday Carry) -->
+                    <div class="routine-widget-section">
+                        <div class="routine-widget-header">
+                            <div class="routine-widget-title">
+                                <span class="material-symbols-outlined routine-icon-check">fact_check</span>
+                                <div>
+                                    <h3>Everyday Carry & Departure Checklist</h3>
+                                    <p class="text-secondary">Things you should never forget before stepping out of home or office</p>
+                                </div>
+                            </div>
+                            <div class="routine-widget-btn-group">
+                                <button class="btn btn-secondary btn-xs" id="btn-check-all-routine">Mark All Packed</button>
+                                <button class="btn btn-secondary btn-xs" id="btn-reset-routine">Reset List</button>
+                            </div>
+                        </div>
+                        <div class="routine-chips-flow" id="dashboard-routine-chips">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- Metric Stats Grid -->
+                    <div class="stats-overview-grid">
+                        <div class="metric-card">
+                            <div class="metric-icon-box bg-blue">
+                                <span class="material-symbols-outlined">inventory_2</span>
+                            </div>
+                            <div class="metric-info">
+                                <div class="metric-value" id="stat-total-items">0</div>
+                                <div class="metric-label">Total Possessions</div>
+                            </div>
+                        </div>
+
+                        <div class="metric-card">
+                            <div class="metric-icon-box bg-emerald">
+                                <span class="material-symbols-outlined">roofing</span>
+                            </div>
+                            <div class="metric-info">
+                                <div class="metric-value" id="stat-total-places">0</div>
+                                <div class="metric-label">Physical Premises</div>
+                            </div>
+                        </div>
+
+                        <div class="metric-card">
+                            <div class="metric-icon-box bg-amber">
+                                <span class="material-symbols-outlined">star</span>
+                            </div>
+                            <div class="metric-info">
+                                <div class="metric-value" id="stat-starred-items">0</div>
+                                <div class="metric-label">Important / Starred</div>
+                            </div>
+                        </div>
+
+                        <div class="metric-card">
+                            <div class="metric-icon-box bg-purple">
+                                <span class="material-symbols-outlined">all_inbox</span>
+                            </div>
+                            <div class="metric-info">
+                                <div class="metric-value" id="stat-total-containers">0</div>
+                                <div class="metric-label">QR Storage Boxes</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Bar -->
+                    <div class="quick-action-strip">
+                        <span class="action-strip-title">QUICK ACTIONS</span>
+                        <div class="action-strip-buttons">
+                            <button class="action-pill-btn" id="qa-add-item">
+                                <span class="material-symbols-outlined">add_circle</span>
+                                <span>Add Item</span>
+                            </button>
+                            <button class="action-pill-btn" id="qa-voice">
+                                <span class="material-symbols-outlined">mic</span>
+                                <span>Voice Add</span>
+                            </button>
+                            <button class="action-pill-btn" id="qa-scan-qr">
+                                <span class="material-symbols-outlined">qr_code_scanner</span>
+                                <span>Scan Box QR</span>
+                            </button>
+                            <button class="action-pill-btn" id="qa-add-lent">
+                                <span class="material-symbols-outlined">handshake</span>
+                                <span>Record Loan</span>
+                            </button>
+                            <button class="action-pill-btn" id="qa-add-location">
+                                <span class="material-symbols-outlined">add_location_alt</span>
+                                <span>New Room/Spot</span>
+                            </button>
+                            <button class="action-pill-btn" id="qa-add-container">
+                                <span class="material-symbols-outlined">add_box</span>
+                                <span>New Container</span>
+                            </button>
+                            <button class="action-pill-btn" id="qa-export">
+                                <span class="material-symbols-outlined">print</span>
+                                <span>Print / Export</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Split Panels: Starred Items & Active Alerts -->
+                    <div class="dashboard-split-columns">
+                        <!-- Starred / Important Items -->
+                        <div class="dashboard-panel-card">
+                            <div class="panel-card-header">
+                                <div class="panel-title-with-icon">
+                                    <span class="material-symbols-outlined text-amber">star</span>
+                                    <h3>Frequently Needed & Important</h3>
+                                </div>
+                                <button class="btn-text" id="link-view-all-important">View All →</button>
+                            </div>
+                            <div id="starred-items-list" class="cards-list-flow">
+                                <div class="empty-state-box">
+                                    <span class="material-symbols-outlined">star_outline</span>
+                                    <p>No starred items. Star passports, keys, or cards for instant 1-tap lookup.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Active Expirations & Reminders -->
+                        <div class="dashboard-panel-card">
+                            <div class="panel-card-header">
+                                <div class="panel-title-with-icon">
+                                    <span class="material-symbols-outlined text-rose">notifications_active</span>
+                                    <h3>Warranties & Expiry Alerts</h3>
+                                </div>
+                                <button class="btn btn-secondary btn-xs" id="btn-add-reminder-dash">+ Add Alert</button>
+                            </div>
+                            <div id="dashboard-reminders-list" class="reminders-list-flow">
+                                <div class="empty-state-box">
+                                    <span class="material-symbols-outlined">event_available</span>
+                                    <p>No upcoming expirations. Add warranty end dates, passport renewals or battery alerts.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recently Added & Tracked Items Section -->
+                    <div class="dashboard-panel-card mt-5">
+                        <div class="panel-card-header">
+                            <div class="panel-title-with-icon">
+                                <span class="material-symbols-outlined text-blue">history</span>
+                                <h3>Recently Tracked Possessions</h3>
+                            </div>
+                            <button class="btn-text" id="link-view-all-items">Explore All Items →</button>
+                        </div>
+                        <div id="recent-items-container" class="item-cards-grid"></div>
+                    </div>
+                </section>
+
+                <!-- 2. ALL ITEMS VIEW WITH BULK ACTIONS -->
+                <section id="view-items" class="view-panel">
+                    <div class="view-header">
+                        <div class="view-title-wrap">
+                            <h2>All Possessions & Inventory</h2>
+                            <p class="text-secondary">Search, categorize, edit, bulk-relocate and manage your recorded possessions</p>
+                        </div>
+                        <div class="header-action-cluster">
+                            <button class="btn btn-secondary btn-sm" id="btn-bulk-move-trigger" style="display: none;">
+                                <span class="material-symbols-outlined">drive_file_move</span>
+                                <span>Bulk Relocate (<span id="bulk-selected-count">0</span>)</span>
+                            </button>
+                            <button class="btn btn-secondary btn-sm" id="btn-export-items-csv">
+                                <span class="material-symbols-outlined">download</span>
+                                <span>Export CSV</span>
+                            </button>
+                            <button class="btn btn-primary" id="btn-create-item-view">
+                                <span class="material-symbols-outlined">add</span>
+                                <span>Add Item</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Category Pills Filter Bar -->
+                    <div class="category-pills-bar" id="category-pills-container">
+                        <!-- Populated dynamically -->
+                    </div>
+
+                    <!-- Items Grid -->
+                    <div id="items-table-container" class="item-cards-grid mt-4"></div>
+                </section>
+
+                <!-- 3. DAILY ROUTINE (EDC) VIEW -->
+                <section id="view-routine" class="view-panel">
+                    <div class="view-header">
+                        <div class="view-title-wrap">
+                            <h2>Everyday Carry (EDC) & Departure Checklist</h2>
+                            <p class="text-secondary">Never leave your essentials behind when heading out for work, gym, or travel</p>
+                        </div>
+                        <button class="btn btn-primary" id="btn-add-routine-item">
+                            <span class="material-symbols-outlined">add</span>
+                            <span>Add Custom Carry Item</span>
+                        </button>
+                    </div>
+
+                    <div class="routine-tracker-layout">
+                        <div class="routine-progress-banner">
+                            <div class="progress-details">
+                                <h3 id="routine-progress-title">Packing Readiness</h3>
+                                <p class="text-secondary" id="routine-progress-subtitle">0 of 0 items checked</p>
+                            </div>
+                            <div class="progress-number-badge" id="routine-percent">0%</div>
+                        </div>
+                        <div class="progress-track-bar">
+                            <div class="progress-fill-indicator" id="routine-progress-fill" style="width: 0%;"></div>
+                        </div>
+
+                        <div class="routine-cards-grid mt-4" id="routine-full-items-grid">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 4. LENT & BORROWED TRACKER VIEW -->
+                <section id="view-lent" class="view-panel">
+                    <div class="view-header">
+                        <div class="view-title-wrap">
+                            <h2>Lent & Borrowed Tracker ("Who Has My Stuff?")</h2>
+                            <p class="text-secondary">Keep track of tools, books, gadgets, luggage, or money lent out to friends, family, or colleagues</p>
+                        </div>
+                        <button class="btn btn-primary" id="btn-add-lent-modal">
+                            <span class="material-symbols-outlined">add</span>
+                            <span>Record Loaned Item</span>
+                        </button>
+                    </div>
+                    <div id="lent-items-container" class="item-cards-grid"></div>
+                </section>
+
+                <!-- 5. TRIPS & PACKING LISTS VIEW -->
+                <section id="view-trips" class="view-panel">
+                    <div class="view-header">
+                        <div class="view-title-wrap">
+                            <h2>Trips, Travel & Moving Box Manifests</h2>
+                            <p class="text-secondary">Create customized packing lists for vacations, gym workouts, or moving boxes</p>
+                        </div>
+                        <button class="btn btn-primary" id="btn-create-trip-modal">
+                            <span class="material-symbols-outlined">add</span>
+                            <span>Create New Manifest</span>
+                        </button>
+                    </div>
+                    <div id="trips-container" class="trips-grid-layout"></div>
+                </section>
+
+                <!-- 6. ASSET VALUATION & INSURANCE REPORT VIEW -->
+                <section id="view-valuation" class="view-panel">
+                    <div class="view-header">
+                        <div class="view-title-wrap">
+                            <h2>Home Insurance & Asset Net Worth Report</h2>
+                            <p class="text-secondary">Audit total inventory replacement value and print claim-ready documentation</p>
+                        </div>
+                        <button class="btn btn-primary" id="btn-print-insurance-report">
+                            <span class="material-symbols-outlined">print</span>
+                            <span>Print Insurance Claim Sheet</span>
+                        </button>
+                    </div>
+
+                    <div class="valuation-overview-grid">
+                        <div class="valuation-summary-card">
+                            <span class="val-label">TOTAL ESTIMATED INVENTORY VALUE</span>
+                            <div class="val-number" id="val-total-amount">₹0.00</div>
+                            <span class="val-sub" id="val-priced-count">0 items with recorded value</span>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-panel-card mt-4">
+                        <div class="panel-card-header">
+                            <h3>Category Valuation Breakdown</h3>
+                        </div>
+                        <div id="valuation-category-breakdown" class="val-category-grid"></div>
+                    </div>
+                </section>
+
+                <!-- 7. LOCATION HIERARCHY TREE VIEW -->
+                <section id="view-locations" class="view-panel">
+                    <div class="view-header">
+                        <div class="view-title-wrap">
+                            <h2>Location Hierarchy & Room Explorer</h2>
+                            <p class="text-secondary">Structured tree: Premise → Room → Furniture / Section → Drawer / Sub-location</p>
+                        </div>
+                        <div class="header-action-cluster">
+                            <button class="btn btn-secondary" id="btn-add-place-modal">
+                                <span class="material-symbols-outlined">add_business</span>
+                                <span>New Premise</span>
+                            </button>
+                            <button class="btn btn-primary" id="btn-add-location-view">
+                                <span class="material-symbols-outlined">add_location</span>
+                                <span>New Location</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="tree-explorer-split-card">
+                        <div class="tree-left-pane">
+                            <div class="pane-title-badge">PREMISE HIERARCHY</div>
+                            <div id="locations-tree-root" class="tree-nodes-list"></div>
+                        </div>
+                        <div class="tree-right-pane">
+                            <div id="selected-location-details" class="location-details-container">
+                                <div class="empty-state-box">
+                                    <span class="material-symbols-outlined">account_tree</span>
+                                    <p>Select any room or spot in the tree to see all sub-locations, containers and stored items.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 8. CONTAINERS & QR VIEW -->
+                <section id="view-containers" class="view-panel">
+                    <div class="view-header">
+                        <div class="view-title-wrap">
+                            <h2>Storage Boxes, Bags & QR Labels</h2>
+                            <p class="text-secondary">Label your physical boxes with secure QR codes. Scan anytime to see what's inside without opening!</p>
+                        </div>
+                        <div class="header-action-cluster">
+                            <button class="btn btn-secondary" id="btn-print-qr-sheet">
+                                <span class="material-symbols-outlined">grid_view</span>
+                                <span>Print All QR Stickers (A4 Sheet)</span>
+                            </button>
+                            <button class="btn btn-secondary" id="btn-scan-qr-view">
+                                <span class="material-symbols-outlined">qr_code_scanner</span>
+                                <span>Scan QR Label</span>
+                            </button>
+                            <button class="btn btn-primary" id="btn-add-container-view">
+                                <span class="material-symbols-outlined">add_box</span>
+                                <span>New Storage Box</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div id="containers-grid-container" class="item-cards-grid"></div>
+                </section>
+
+                <!-- 9. REMINDERS VIEW -->
+                <section id="view-reminders" class="view-panel">
+                    <div class="view-header">
+                        <div class="view-title-wrap">
+                            <h2>Warranties & Expiration Tracker</h2>
+                            <p class="text-secondary">Keep track of product warranties, passport expirations, insurance renewals and service dates</p>
+                        </div>
+                        <button class="btn btn-primary" id="btn-add-reminder-view">
+                            <span class="material-symbols-outlined">add_alarm</span>
+                            <span>Schedule New Alert</span>
+                        </button>
+                    </div>
+                    <div id="reminders-table-container" class="item-cards-grid"></div>
+                </section>
+
+                <!-- 10. PROFILE VIEW -->
+                <section id="view-profile" class="view-panel">
+                    <div class="view-header">
+                        <div class="view-title-wrap">
+                            <h2>My Profile</h2>
+                            <p class="text-secondary">Your account details, stats, and premises overview</p>
+                        </div>
+                    </div>
+                    <div id="profile-page-content"></div>
+                </section>
+
+                <!-- 11. SETTINGS VIEW -->
+                <section id="view-settings" class="view-panel">
+                    <div class="view-header">
+                        <div class="view-title-wrap">
+                            <h2>Settings</h2>
+                            <p class="text-secondary">App preferences, voice AI, notifications, data and Android install</p>
+                        </div>
+                    </div>
+                    <div id="settings-page-content"></div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- ==================== MODALS ==================== -->
+
+    <!-- MODAL: ADD / EDIT ITEM -->
+    <div id="modal-item" class="modal-backdrop">
+        <div class="modal-sheet">
+            <div class="modal-sheet-header">
+                <h3 id="modal-item-title">Record New Possession</h3>
+                <button class="icon-btn modal-dismiss-btn" data-modal="modal-item"><span class="material-symbols-outlined">close</span></button>
+            </div>
+            <form id="item-form" class="modal-sheet-body">
+                <input type="hidden" id="item-edit-id">
+                
+                <div class="form-field">
+                    <label>Item Name <span class="req">*</span></label>
+                    <input type="text" id="item-name" placeholder="e.g. Indian Passport, MacBook Air Charger, House Keys" required>
+                </div>
+
+                <div class="form-split-row">
+                    <div class="form-field">
+                        <label>Category <span class="req">*</span></label>
+                        <select id="item-category" required></select>
+                    </div>
+                    <div class="form-field">
+                        <label>Location Spot <span class="req">*</span></label>
+                        <select id="item-location" required></select>
+                    </div>
+                </div>
+
+                <div class="form-split-row">
+                    <div class="form-field">
+                        <label>Inside Container / Box (Optional)</label>
+                        <select id="item-container">
+                            <option value="">None (Directly on spot/shelf)</option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label>Item Condition</label>
+                        <select id="item-condition">
+                            <option value="New">Brand New</option>
+                            <option value="Good" selected>Good Condition</option>
+                            <option value="Fair">Fair / Used</option>
+                            <option value="Damaged">Damaged / Needs Repair</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-split-row">
+                    <div class="form-field">
+                        <label>Brand (Optional)</label>
+                        <input type="text" id="item-brand" placeholder="e.g. Apple, Sony, Government">
+                    </div>
+                    <div class="form-field">
+                        <label>Model / Serial Number</label>
+                        <input type="text" id="item-serial" placeholder="e.g. A2337 / K892301">
+                    </div>
+                </div>
+
+                <div class="form-split-row">
+                    <div class="form-field">
+                        <label>Purchase Date</label>
+                        <input type="date" id="item-purchase-date">
+                    </div>
+                    <div class="form-field">
+                        <label>Purchase Price (₹)</label>
+                        <input type="number" id="item-purchase-price" step="0.01" placeholder="0.00">
+                    </div>
+                    <div class="form-field">
+                        <label>Quantity</label>
+                        <input type="number" id="item-quantity" value="1" min="1">
+                    </div>
+                </div>
+
+                <div class="form-field">
+                    <label>Description & Placement Notes</label>
+                    <textarea id="item-description" rows="2" placeholder="e.g. Kept inside the blue pouch behind certificates on top shelf"></textarea>
+                </div>
+
+                <div class="form-check-field">
+                    <label>
+                        <input type="checkbox" id="item-important">
+                        <span>⭐ Pin as Important / Starred (Fast access on Dashboard)</span>
+                    </label>
+                </div>
+
+                <div class="modal-sheet-footer">
+                    <button type="button" class="btn btn-secondary" data-modal="modal-item">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="btn-save-item">Save Possession</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: RECORD LENT ITEM -->
+    <div id="modal-lent" class="modal-backdrop">
+        <div class="modal-sheet">
+            <div class="modal-sheet-header">
+                <h3>Record Lent Out Item</h3>
+                <button class="icon-btn modal-dismiss-btn" data-modal="modal-lent"><span class="material-symbols-outlined">close</span></button>
+            </div>
+            <form id="lent-form" class="modal-sheet-body">
+                <div class="form-field">
+                    <label>Select Item <span class="req">*</span></label>
+                    <select id="lent-item-id" required></select>
+                </div>
+
+                <div class="form-split-row">
+                    <div class="form-field">
+                        <label>Borrower's Name <span class="req">*</span></label>
+                        <input type="text" id="lent-borrower-name" placeholder="e.g. Rahul Sharma, Neighbor John" required>
+                    </div>
+                    <div class="form-field">
+                        <label>Phone / Contact (Optional)</label>
+                        <input type="tel" id="lent-borrower-phone" placeholder="e.g. +91 98765 43210">
+                    </div>
+                </div>
+
+                <div class="form-split-row">
+                    <div class="form-field">
+                        <label>Date Lent <span class="req">*</span></label>
+                        <input type="date" id="lent-date" required>
+                    </div>
+                    <div class="form-field">
+                        <label>Expected Return Date</label>
+                        <input type="date" id="lent-due-date">
+                    </div>
+                </div>
+
+                <div class="form-field">
+                    <label>Notes (e.g. Purpose of borrowing)</label>
+                    <input type="text" id="lent-notes" placeholder="e.g. Borrowed for home drilling work">
+                </div>
+
+                <div class="modal-sheet-footer">
+                    <button type="button" class="btn btn-secondary" data-modal="modal-lent">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Loan Record</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: CREATE PACKING TRIP / MANIFEST -->
+    <div id="modal-trip" class="modal-backdrop">
+        <div class="modal-sheet">
+            <div class="modal-sheet-header">
+                <h3>Create Packing Manifest</h3>
+                <button class="icon-btn modal-dismiss-btn" data-modal="modal-trip"><span class="material-symbols-outlined">close</span></button>
+            </div>
+            <form id="trip-form" class="modal-sheet-body">
+                <div class="form-field">
+                    <label>Manifest / Trip Name <span class="req">*</span></label>
+                    <input type="text" id="trip-name" placeholder="e.g. Goa Holiday Trip, Moving Box #3 (Kitchen), Gym Bag" required>
+                </div>
+
+                <div class="form-split-row">
+                    <div class="form-field">
+                        <label>Target Date</label>
+                        <input type="date" id="trip-date">
+                    </div>
+                    <div class="form-field">
+                        <label>Destination / Notes</label>
+                        <input type="text" id="trip-dest" placeholder="e.g. North Goa / New Apartment">
+                    </div>
+                </div>
+
+                <div class="modal-sheet-footer">
+                    <button type="button" class="btn btn-secondary" data-modal="modal-trip">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create Manifest</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: BULK MOVE -->
+    <div id="modal-bulk-move" class="modal-backdrop">
+        <div class="modal-sheet">
+            <div class="modal-sheet-header">
+                <h3>Bulk Relocate Items</h3>
+                <button class="icon-btn modal-dismiss-btn" data-modal="modal-bulk-move"><span class="material-symbols-outlined">close</span></button>
+            </div>
+            <form id="bulk-move-form" class="modal-sheet-body">
+                <p class="text-secondary" id="bulk-move-desc">Relocating 0 selected items</p>
+
+                <div class="form-field mt-2">
+                    <label>New Destination Location <span class="req">*</span></label>
+                    <select id="bulk-move-target-location" required></select>
+                </div>
+
+                <div class="form-field">
+                    <label>Move Reason</label>
+                    <input type="text" id="bulk-move-reason" value="Bulk Relocation">
+                </div>
+
+                <div class="modal-sheet-footer">
+                    <button type="button" class="btn btn-secondary" data-modal="modal-bulk-move">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Confirm Bulk Move</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: ITEM DETAILS & MOVEMENT TIMELINE -->
+    <div id="modal-item-detail" class="modal-backdrop">
+        <div class="modal-sheet">
+            <div class="modal-sheet-header">
+                <h3 id="detail-modal-title">Possession Details</h3>
+                <button class="icon-btn modal-dismiss-btn" data-modal="modal-item-detail"><span class="material-symbols-outlined">close</span></button>
+            </div>
+            <div class="modal-sheet-body" id="detail-modal-content">
+                <!-- Populated dynamically -->
+            </div>
+            <div class="modal-sheet-footer">
+                <button type="button" class="btn btn-secondary" data-modal="modal-item-detail">Close</button>
+                <button type="button" class="btn btn-primary" id="btn-detail-move-action">Move Item Location</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: QUICK MOVE -->
+    <div id="modal-move" class="modal-backdrop">
+        <div class="modal-sheet">
+            <div class="modal-sheet-header">
+                <h3>Quick Relocate Item</h3>
+                <button class="icon-btn modal-dismiss-btn" data-modal="modal-move"><span class="material-symbols-outlined">close</span></button>
+            </div>
+            <form id="move-form" class="modal-sheet-body">
+                <input type="hidden" id="move-item-id">
+                <div class="relocate-info-card">
+                    <div class="relocate-item-title" id="move-item-name">Item Name</div>
+                    <div class="relocate-current-path" id="move-current-path">Current Location: Home → Bedroom → Drawer</div>
+                </div>
+
+                <div class="form-field mt-3">
+                    <label>New Destination Location <span class="req">*</span></label>
+                    <select id="move-new-location" required></select>
+                </div>
+
+                <div class="form-field">
+                    <label>Move Reason / Notes</label>
+                    <input type="text" id="move-reason" placeholder="e.g. Moved for travel, Shifted to office desk, Routine cleanup" value="Quick Move">
+                </div>
+
+                <div class="modal-sheet-footer">
+                    <button type="button" class="btn btn-secondary" data-modal="modal-move">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Confirm & Log Movement History</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: ADD LOCATION -->
+    <div id="modal-location" class="modal-backdrop">
+        <div class="modal-sheet">
+            <div class="modal-sheet-header">
+                <h3>Add Location / Sub-Room</h3>
+                <button class="icon-btn modal-dismiss-btn" data-modal="modal-location"><span class="material-symbols-outlined">close</span></button>
+            </div>
+            <form id="location-form" class="modal-sheet-body">
+                <div class="form-field">
+                    <label>Physical Premise <span class="req">*</span></label>
+                    <select id="loc-place-id" required></select>
+                </div>
+
+                <div class="form-field">
+                    <label>Parent Location (Optional - for sub-rooms / furniture)</label>
+                    <select id="loc-parent-id">
+                        <option value="">Top Level (Directly in Place e.g. Bedroom, Kitchen)</option>
+                    </select>
+                </div>
+
+                <div class="form-field">
+                    <label>Location Spot Name <span class="req">*</span></label>
+                    <input type="text" id="loc-name" placeholder="e.g. Study Table, Top Drawer, Wardrobe Shelf 3" required>
+                </div>
+
+                <div class="form-field">
+                    <label>Icon Style</label>
+                    <select id="loc-icon">
+                        <option value="room">Room / General Area</option>
+                        <option value="bed">Bedroom</option>
+                        <option value="kitchen">Kitchen</option>
+                        <option value="desk">Study Table / Desk</option>
+                        <option value="drawer">Drawer</option>
+                        <option value="door_sliding">Cupboard / Wardrobe</option>
+                        <option value="garage">Garage</option>
+                        <option value="inventory_2">Storage Shelf</option>
+                    </select>
+                </div>
+
+                <div class="modal-sheet-footer">
+                    <button type="button" class="btn btn-secondary" data-modal="modal-location">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create Location</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: ADD PLACE -->
+    <div id="modal-place" class="modal-backdrop">
+        <div class="modal-sheet">
+            <div class="modal-sheet-header">
+                <h3>Create New Premise / Place</h3>
+                <button class="icon-btn modal-dismiss-btn" data-modal="modal-place"><span class="material-symbols-outlined">close</span></button>
+            </div>
+            <form id="place-form" class="modal-sheet-body">
+                <div class="form-field">
+                    <label>Premise Name <span class="req">*</span></label>
+                    <input type="text" id="place-name" placeholder="e.g. My Home, Office, Farm, Parents' Residence" required>
+                </div>
+
+                <div class="form-split-row">
+                    <div class="form-field">
+                        <label>Place Type</label>
+                        <select id="place-type">
+                            <option value="1">Home</option>
+                            <option value="2">Office</option>
+                            <option value="3">Garage</option>
+                            <option value="4">Storage</option>
+                            <option value="5">Shop</option>
+                            <option value="6">Farm</option>
+                            <option value="99">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label>Address / Description</label>
+                        <input type="text" id="place-address" placeholder="e.g. Sector 14, Gurugram">
+                    </div>
+                </div>
+
+                <div class="modal-sheet-footer">
+                    <button type="button" class="btn btn-secondary" data-modal="modal-place">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create Premise</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: ADD CONTAINER & QR -->
+    <div id="modal-container" class="modal-backdrop">
+        <div class="modal-sheet">
+            <div class="modal-sheet-header">
+                <h3>Create Storage Box & QR Label</h3>
+                <button class="icon-btn modal-dismiss-btn" data-modal="modal-container"><span class="material-symbols-outlined">close</span></button>
+            </div>
+            <form id="container-form" class="modal-sheet-body">
+                <div class="form-field">
+                    <label>Box / Container Name <span class="req">*</span></label>
+                    <input type="text" id="cnt-name" placeholder="e.g. Blue Box #4, Winter Clothes Bag, Tool Chest" required>
+                </div>
+
+                <div class="form-split-row">
+                    <div class="form-field">
+                        <label>Container Type</label>
+                        <select id="cnt-type">
+                            <option value="Box">Storage Box</option>
+                            <option value="Bag">Bag / Suitcase</option>
+                            <option value="Folder">Folder / File Pouch</option>
+                            <option value="Drawer">Drawer</option>
+                            <option value="Cupboard">Cupboard</option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label>Location Spot <span class="req">*</span></label>
+                        <select id="cnt-location" required></select>
+                    </div>
+                </div>
+
+                <div class="form-field">
+                    <label>Custom Label Code (Auto-generated if empty)</label>
+                    <input type="text" id="cnt-code" placeholder="e.g. BOX-004">
+                </div>
+
+                <div class="modal-sheet-footer">
+                    <button type="button" class="btn btn-secondary" data-modal="modal-container">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Generate Box & QR</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: QR CODE DISPLAY & PRINT -->
+    <div id="modal-qr" class="modal-backdrop">
+        <div class="modal-sheet text-center">
+            <div class="modal-sheet-header">
+                <h3 id="qr-modal-title">Printable Box QR Label</h3>
+                <button class="icon-btn modal-dismiss-btn" data-modal="modal-qr"><span class="material-symbols-outlined">close</span></button>
+            </div>
+            <div class="modal-sheet-body">
+                <div id="qr-view-box" class="qr-printable-ticket">
+                    <div class="qr-ticket-top">WHEREISIT INVENTORY TAG</div>
+                    <div class="qr-image-wrapper">
+                        <img id="qr-image-display" src="" alt="QR Code" class="qr-img">
+                    </div>
+                    <div class="qr-ticket-details">
+                        <h4 id="qr-container-name">BOX-004</h4>
+                        <p id="qr-container-path">Home → Bedroom → Cupboard</p>
+                        <span class="qr-token-mono" id="qr-token-text">TOKEN: ...</span>
+                    </div>
+                </div>
+                <div class="modal-sheet-footer justify-center mt-3">
+                    <button class="btn btn-primary" id="btn-print-qr"><span class="material-symbols-outlined">print</span> Print Sticker Label</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: MULTI-QR PRINTABLE SHEET (A4) -->
+    <div id="modal-qr-sheet" class="modal-backdrop">
+        <div class="modal-sheet" style="max-width: 800px;">
+            <div class="modal-sheet-header">
+                <h3>Printable QR Sticker Sheet (A4 Grid)</h3>
+                <button class="icon-btn modal-dismiss-btn" data-modal="modal-qr-sheet"><span class="material-symbols-outlined">close</span></button>
+            </div>
+            <div class="modal-sheet-body">
+                <div id="printable-qr-grid" class="qr-sheet-grid">
+                    <!-- Populated dynamically -->
+                </div>
+                <div class="modal-sheet-footer justify-center mt-3">
+                    <button class="btn btn-primary" onclick="window.print()"><span class="material-symbols-outlined">print</span> Print Full Sticker Sheet</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: QR SCANNER WITH LIVE CAMERA & CODE LOOKUP -->
+    <div id="modal-scanner" class="modal-backdrop">
+        <div class="modal-sheet">
+            <div class="modal-sheet-header">
+                <h3>QR Code Container Scanner</h3>
+                <button class="icon-btn modal-dismiss-btn" data-modal="modal-scanner"><span class="material-symbols-outlined">close</span></button>
+            </div>
+            <div class="modal-sheet-body">
+                <div class="scanner-camera-viewport" id="camera-scanner-wrapper">
+                    <video id="qr-video" class="camera-video-stream" playsinline></video>
+                    <div class="laser-scanner-line"></div>
+                    <div class="camera-help-badge">Scan any container QR code label</div>
+                </div>
+
+                <div class="camera-control-row">
+                    <button class="btn btn-secondary btn-sm" id="btn-toggle-camera">
+                        <span class="material-symbols-outlined">videocam</span> <span id="camera-btn-text">Start Camera Stream</span>
+                    </button>
+                </div>
+
+                <div class="or-separator-line"><span>OR LOOKUP WITH TOKEN</span></div>
+
+                <div class="manual-search-row">
+                    <input type="text" id="scanner-token-input" placeholder="Paste Token / Scan Code (e.g. 2a634f34a6...)">
+                    <button class="btn btn-primary" id="btn-execute-scan">Inspect Box</button>
+                </div>
+
+                <div id="scan-result-panel" class="scan-result-card" style="display: none;">
+                    <div class="scan-card-header">
+                        <h4 id="scanned-container-name">Winter Clothes</h4>
+                        <span class="path-badge" id="scanned-location-path">Home → Store Room</span>
+                    </div>
+                    <div class="scan-items-subheading">Items packed inside:</div>
+                    <ul id="scanned-items-list" class="scanned-items-list-flow"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: ADD REMINDER -->
+    <div id="modal-reminder" class="modal-backdrop">
+        <div class="modal-sheet">
+            <div class="modal-sheet-header">
+                <h3>Schedule Warranty / Expiry Alert</h3>
+                <button class="icon-btn modal-dismiss-btn" data-modal="modal-reminder"><span class="material-symbols-outlined">close</span></button>
+            </div>
+            <form id="reminder-form" class="modal-sheet-body">
+                <div class="form-field">
+                    <label>Select Tracked Possession <span class="req">*</span></label>
+                    <select id="rem-item-id" required></select>
+                </div>
+
+                <div class="form-split-row">
+                    <div class="form-field">
+                        <label>Alert Category</label>
+                        <select id="rem-type">
+                            <option value="1">Warranty Expiration</option>
+                            <option value="2">Item Expiry Date</option>
+                            <option value="3">Document Renewal (Passport / Aadhaar)</option>
+                            <option value="4">Battery Replacement</option>
+                            <option value="5">Appliance Periodic Service</option>
+                            <option value="99">Custom Reminder</option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label>Target Expiry Date <span class="req">*</span></label>
+                        <input type="date" id="rem-date" required>
+                    </div>
+                </div>
+
+                <div class="form-field">
+                    <label>Notes & Policy Reference (Optional)</label>
+                    <input type="text" id="rem-notes" placeholder="e.g. 1 Year Haier AC warranty expires, Call service centre">
+                </div>
+
+                <div class="modal-sheet-footer">
+                    <button type="button" class="btn btn-secondary" data-modal="modal-reminder">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Schedule Alert</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: HEY FINDER (SIRI-LIKE VOICE AI ASSISTANT) -->
+    <div id="modal-voice-agent" class="modal-backdrop">
+        <div class="modal-sheet voice-agent-sheet text-center">
+            <div class="modal-sheet-header">
+                <div class="voice-agent-title-wrap">
+                    <span class="material-symbols-outlined siri-sparkle-icon">auto_awesome</span>
+                    <h3>Finder AI — Multilingual Voice Assistant</h3>
+                </div>
+                <button class="icon-btn modal-dismiss-btn" data-modal="modal-voice-agent"><span class="material-symbols-outlined">close</span></button>
+            </div>
+            <div class="modal-sheet-body voice-agent-body">
+                <!-- 100% Automatic Language Detection Badge -->
+                <div class="voice-auto-indicator">
+                    <span class="material-symbols-outlined">language</span>
+                    <span>100% Auto-Language Detection · Just speak in English, Hindi, Punjabi, etc.</span>
+                </div>
+
+                <!-- Siri Glowing Sphere Orb -->
+                <div class="siri-orb-container" id="siri-orb-trigger">
+                    <div class="siri-orb" id="siri-orb">
+                        <div class="siri-orb-glow"></div>
+                        <div class="siri-orb-core"></div>
+                    </div>
+                    <div class="siri-wave-rings" id="siri-wave-rings"></div>
+                </div>
+
+                <div class="voice-agent-status-text" id="voice-agent-status">
+                    Speak naturally in <strong>any language</strong> (English, Hindi, Punjabi, Spanish, etc.): <br>
+                    <span class="text-highlight">"Where is my phone?"</span> · <span class="text-highlight">"Mera phone kahan hai?"</span> · <span class="text-highlight">"Mera phone kithe hai?"</span>
+                </div>
+
+                <!-- Real-time transcript display -->
+                <div class="voice-transcript-card" id="voice-transcript-card" style="display: none;">
+                    <div class="transcript-label" id="voice-transcript-lang-badge">YOU SAID (AUTO-DETECTED):</div>
+                    <div class="transcript-text" id="voice-transcript-text">"..."</div>
+                </div>
+
+                <!-- AI Response Card -->
+                <div class="voice-response-card" id="voice-response-card" style="display: none;">
+                    <div class="response-label">
+                        <span class="material-symbols-outlined" style="font-size: 16px;">smart_toy</span> FINDER'S RESPONSE:
+                    </div>
+                    <div class="response-text" id="voice-response-text">...</div>
+                    <div id="voice-action-result-slot" class="mt-3"></div>
+                </div>
+
+                <!-- Quick Try Phrases in Multi-Languages -->
+                <div class="quick-phrases-box">
+                    <span class="quick-phrases-label">TRY SPEAKING IN ANY LANGUAGE:</span>
+                    <div class="quick-phrases-row">
+                        <button class="voice-phrase-chip" data-phrase="where is my phone">🇺🇸 "Where is my phone?"</button>
+                        <button class="voice-phrase-chip" data-phrase="mera phone kahan hai">🇮🇳 "Mera phone kahan hai?"</button>
+                        <button class="voice-phrase-chip" data-phrase="mera phone kithe hai">🇮🇳 "Mera phone kithe hai?"</button>
+                        <button class="voice-phrase-chip" data-phrase="i kept my charger in bedroom">🇺🇸 "I kept charger in bedroom"</button>
+                        <button class="voice-phrase-chip" data-phrase="maine apna charger bedroom me rakha hai">🇮🇳 "Maine charger bedroom me rakha hai"</button>
+                        <button class="voice-phrase-chip" data-phrase="main charger bedroom vich rakh ditta">🇮🇳 "Main charger bedroom vich rakh ditta"</button>
+                        <button class="voice-phrase-chip" data-phrase="donde esta mi telefono">🇪🇸 "¿Dónde está mi teléfono?"</button>
+                        <button class="voice-phrase-chip" data-phrase="ou est mon telephone">🇫🇷 "Où est mon téléphone?"</button>
+                        <button class="voice-phrase-chip" data-phrase="wo ist mein telefon">🇩🇪 "Wo ist mein Telefon?"</button>
+                    </div>
+                </div>
+
+                <div class="voice-agent-footer-controls">
+                    <label class="handsfree-toggle-label">
+                        <input type="checkbox" id="chk-handsfree-continuous" checked>
+                        <span>🎙️ Continuous Multilingual Assistant Mode (Always Listening)</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: EDIT PROFILE -->
+    <div id="modal-edit-profile" class="modal-backdrop">
+        <div class="modal-sheet">
+            <div class="modal-sheet-header">
+                <h3>Edit Profile</h3>
+                <button class="icon-btn modal-dismiss-btn" data-modal="modal-edit-profile"><span class="material-symbols-outlined">close</span></button>
+            </div>
+            <form id="edit-profile-form" class="modal-sheet-body" onsubmit="event.preventDefault(); saveProfile();">
+                <div class="form-split-row">
+                    <div class="form-field">
+                        <label>First Name <span class="req">*</span></label>
+                        <input type="text" id="edit-profile-firstname" placeholder="First Name" required>
+                    </div>
+                    <div class="form-field">
+                        <label>Last Name</label>
+                        <input type="text" id="edit-profile-lastname" placeholder="Last Name">
+                    </div>
+                </div>
+                <div class="form-field">
+                    <label>Email Address</label>
+                    <input type="email" id="edit-profile-email" placeholder="email@domain.com" disabled style="opacity: 0.7;">
+                </div>
+                <div class="modal-sheet-footer">
+                    <button type="button" class="btn btn-secondary" data-modal="modal-edit-profile">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- Mobile Bottom Navigation Bar -->
+    <nav class="mobile-bottom-nav" id="mobile-bottom-nav">
+        <div class="mobile-nav-inner">
+            <button class="mobile-nav-btn active" data-view="dashboard" id="mnav-dashboard">
+                <span class="material-symbols-outlined">grid_view</span>
+                <span class="nav-label">Dashboard</span>
+            </button>
+            <button class="mobile-nav-btn" data-view="items" id="mnav-items">
+                <span class="material-symbols-outlined">inventory_2</span>
+                <span class="nav-label">Items</span>
+            </button>
+            <button class="mobile-nav-btn" data-view="routine" id="mnav-routine">
+                <span class="material-symbols-outlined">checklist</span>
+                <span class="nav-label">Daily</span>
+            </button>
+            <button class="mobile-nav-btn" data-view="locations" id="mnav-locations">
+                <span class="material-symbols-outlined">location_on</span>
+                <span class="nav-label">Rooms</span>
+            </button>
+            <button class="mobile-nav-btn" data-view="containers" id="mnav-containers">
+                <span class="material-symbols-outlined">archive</span>
+                <span class="nav-label">Boxes</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="toast-tray"></div>
+
+    <!-- Modular JS — Core Foundation -->
+    <script src="/js/config.js"></script>
+    <script src="/js/state.js"></script>
+    <script src="/js/toast.js"></script>
+    <script src="/js/theme.js"></script>
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/pwa.js"></script>
+    <!-- Modular JS — Feature Modules -->
+    <script src="/js/modules/modals.js"></script>
+    <script src="/js/modules/search.js"></script>
+    <script src="/js/modules/voice.js"></script>
+    <!-- Modular JS — Views & Pages -->
+    <script src="/js/pages/dashboard.js"></script>
+    <script src="/js/pages/items.js"></script>
+    <script src="/js/pages/routine.js"></script>
+    <script src="/js/pages/lent.js"></script>
+    <script src="/js/pages/trips.js"></script>
+    <script src="/js/pages/locations.js"></script>
+    <script src="/js/pages/containers.js"></script>
+    <script src="/js/pages/reminders.js"></script>
+    <script src="/js/pages/profile.js"></script>
+    <script src="/js/pages/settings.js"></script>
+    <!-- Modular JS — Router & Main Entry -->
+    <script src="/js/router.js"></script>
+    <script src="/app.js"></script>
+</body>
+</html>

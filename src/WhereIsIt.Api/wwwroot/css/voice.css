@@ -1,0 +1,317 @@
+﻿
+.voice-agent-header-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: linear-gradient(135deg, #2563EB, #7C3AED);
+    border: none;
+    border-radius: var(--radius-full);
+    color: white;
+    font-size: 0.84rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(124, 58, 237, 0.35);
+    transition: var(--transition-smooth);
+}
+
+.voice-agent-header-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(124, 58, 237, 0.5);
+}
+
+.siri-sparkle {
+    font-size: 18px;
+    animation: siriSparkle 2s infinite ease-in-out;
+}
+
+@keyframes siriSparkle {
+    0% { transform: scale(0.9) rotate(0deg); opacity: 0.8; }
+    50% { transform: scale(1.2) rotate(180deg); opacity: 1; }
+    100% { transform: scale(0.9) rotate(360deg); opacity: 0.8; }
+}
+
+/* Floating Siri Orb Button (Bottom Right) */
+.floating-siri-btn-wrap {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 90;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    padding: 6px 14px 6px 6px;
+    border-radius: var(--radius-full);
+    box-shadow: var(--shadow-elevated);
+    transition: var(--transition-smooth);
+}
+
+.floating-siri-btn-wrap:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 25px rgba(124, 58, 237, 0.35);
+}
+
+.floating-siri-orb {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #3B82F6, #8B5CF6, #EC4899, #10B981);
+    background-size: 300% 300%;
+    animation: siriGradientRotate 4s ease infinite;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    box-shadow: 0 0 15px rgba(139, 92, 246, 0.5);
+}
+
+.siri-floating-label {
+    font-size: 0.84rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #2563EB, #7C3AED);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Siri Voice AI Modal Sheet */
+.voice-agent-sheet {
+    max-width: 580px;
+    background: var(--bg-surface);
+}
+
+.voice-agent-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.siri-sparkle-icon {
+    color: #8B5CF6;
+    font-size: 22px;
+}
+
+.voice-agent-body {
+    padding: 24px 24px 28px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+
+/* Auto-Detection Indicator Pill */
+.voice-auto-indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--bg-input);
+    border: 1px solid var(--border-subtle);
+    padding: 6px 14px;
+    border-radius: var(--radius-full);
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.voice-auto-indicator .material-symbols-outlined {
+    font-size: 16px;
+}
+
+/* Siri Animated Sphere Orb */
+.siri-orb-container {
+    position: relative;
+    width: 140px;
+    height: 140px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin: 10px 0;
+}
+
+.siri-orb {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    position: relative;
+    background: radial-gradient(circle at 30% 30%, #60A5FA, #8B5CF6 50%, #EC4899 75%, #10B981 100%);
+    background-size: 200% 200%;
+    animation: siriOrbMorph 3s infinite alternate ease-in-out, siriGradientRotate 6s infinite ease;
+    box-shadow: 0 0 30px rgba(139, 92, 246, 0.6), inset 0 0 20px rgba(255, 255, 255, 0.4);
+}
+
+.siri-orb.listening {
+    animation: siriOrbPulse 0.8s infinite alternate ease-in-out, siriGradientRotate 2s infinite ease;
+    box-shadow: 0 0 50px rgba(236, 72, 153, 0.8), inset 0 0 25px rgba(255, 255, 255, 0.7);
+}
+
+.siri-orb.speaking {
+    animation: siriOrbSpeak 0.5s infinite alternate ease-in-out, siriGradientRotate 2s infinite ease;
+    box-shadow: 0 0 50px rgba(16, 185, 129, 0.8), inset 0 0 25px rgba(255, 255, 255, 0.7);
+}
+
+@keyframes siriGradientRotate {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+@keyframes siriOrbMorph {
+    0% { transform: scale(1); border-radius: 50%; }
+    50% { transform: scale(1.08); border-radius: 48% 52% 51% 49% / 51% 49% 51% 49%; }
+    100% { transform: scale(1); border-radius: 50%; }
+}
+
+@keyframes siriOrbPulse {
+    0% { transform: scale(1); filter: brightness(1); }
+    100% { transform: scale(1.18); filter: brightness(1.3); }
+}
+
+@keyframes siriOrbSpeak {
+    0% { transform: scale(0.95); filter: brightness(1.1); }
+    100% { transform: scale(1.22); filter: brightness(1.4); }
+}
+
+.siri-wave-rings {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 50%;
+    border: 2px solid rgba(139, 92, 246, 0.4);
+    animation: siriWave 2s infinite ease-out;
+    pointer-events: none;
+}
+
+@keyframes siriWave {
+    0% { transform: scale(0.8); opacity: 0.8; }
+    100% { transform: scale(1.5); opacity: 0; }
+}
+
+.voice-agent-status-text {
+    font-size: 0.94rem;
+    font-weight: 600;
+    color: var(--text-heading);
+    line-height: 1.6;
+    max-width: 440px;
+}
+
+.text-highlight {
+    color: var(--primary);
+    font-weight: 700;
+}
+
+/* Transcript and Response Cards */
+.voice-transcript-card {
+    width: 100%;
+    background: var(--bg-input);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: 14px 18px;
+    text-align: left;
+}
+
+.transcript-label {
+    font-size: 0.68rem;
+    font-weight: 800;
+    color: var(--text-faint);
+    letter-spacing: 0.08em;
+    margin-bottom: 4px;
+}
+
+.transcript-text {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-heading);
+    font-style: italic;
+}
+
+.voice-response-card {
+    width: 100%;
+    background: var(--primary-surface);
+    border: 1px solid var(--primary-border);
+    border-radius: var(--radius-md);
+    padding: 16px 20px;
+    text-align: left;
+}
+
+.response-label {
+    font-size: 0.72rem;
+    font-weight: 800;
+    color: var(--primary);
+    letter-spacing: 0.06em;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 6px;
+}
+
+.response-text {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-heading);
+    line-height: 1.5;
+}
+
+/* Quick Phrases */
+.quick-phrases-box {
+    width: 100%;
+    text-align: left;
+    margin-top: 10px;
+}
+
+.quick-phrases-label {
+    font-size: 0.7rem;
+    font-weight: 800;
+    color: var(--text-faint);
+    letter-spacing: 0.08em;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.quick-phrases-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.voice-phrase-chip {
+    background: var(--bg-input);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-full);
+    padding: 6px 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-heading);
+    cursor: pointer;
+    transition: var(--transition-smooth);
+}
+
+.voice-phrase-chip:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+    transform: translateY(-1px);
+}
+
+.voice-agent-footer-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding-top: 12px;
+    border-top: 1px solid var(--border-subtle);
+}
+
+.handsfree-toggle-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--text-heading);
+    cursor: pointer;
+}
+
