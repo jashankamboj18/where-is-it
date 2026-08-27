@@ -9,7 +9,7 @@ const isNativeApp = window.location.protocol === 'file:' ||
                     window.location.hostname === 'localhost' && window.location.port !== '5030';
 
 // Live production API endpoint on Render
-const CLOUD_API_URL = 'https://where-is-it.onrender.com/api';
+const CLOUD_API_URL = 'https://where-is-it-y2o3.onrender.com/api';
 
 const API_BASE = isLocalDev 
     ? 'http://localhost:5030/api' 

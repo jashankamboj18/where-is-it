@@ -211,81 +211,157 @@ async function handleMoveFormSubmit(e) {
     }
 }
 
+// Helper to validate GUID
+function isValidGuid(str) {
+    return typeof str === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(str);
+}
+
 // Location Create Form
 async function handleLocationFormSubmit(e) {
     e.preventDefault();
-    const dto = {
-        placeId: document.getElementById('loc-place-id').value,
-        parentLocationId: document.getElementById('loc-parent-id').value || null,
-        name: document.getElementById('loc-name').value,
-        icon: document.getElementById('loc-icon').value
+    const placeIdVal = document.getElementById('loc-place-id').value;
+    const parentIdVal = document.getElementById('loc-parent-id').value;
+    const nameVal = document.getElementById('loc-name').value.trim();
+    const iconVal = document.getElementById('loc-icon').value || 'room';
+
+    if (!nameVal) {
+        showToast('Please enter a location name', 'error');
+        return;
+    }
+
+    const newLoc = {
+        id: `loc_${Date.now()}`,
+        placeId: placeIdVal || state.activePlaceId,
+        parentLocationId: (parentIdVal && isValidGuid(parentIdVal)) ? parentIdVal : null,
+        name: nameVal,
+        icon: iconVal,
+        fullPath: nameVal
     };
 
-    const res = await apiFetch('/locations', {
-        method: 'POST',
-        body: JSON.stringify(dto)
-    });
+    // 1. Immediate 0ms local state update
+    state.locations.push(newLoc);
+    state.rooms.push(newLoc);
+    persistLocalState();
+    populateRoomDropdowns();
+    populateLocationDropdowns();
 
-    if (res.success) {
-        showToast(`Location "${dto.name}" created!`, 'success');
-        closeModal('modal-location');
-        document.getElementById('location-form').reset();
-        await loadLocations();
-        renderLocationTree();
-    } else {
-        showToast(res.message || 'Failed to create location', 'error');
+    showToast(`Location "${nameVal}" created!`, 'success');
+    closeModal('modal-location');
+    document.getElementById('location-form').reset();
+    renderLocationTree();
+
+    // 2. Background API sync
+    const apiDto = {
+        placeId: isValidGuid(placeIdVal) ? placeIdVal : (state.places.find(p => isValidGuid(p.id)) || {}).id,
+        parentLocationId: (parentIdVal && isValidGuid(parentIdVal)) ? parentIdVal : null,
+        name: nameVal,
+        icon: iconVal
+    };
+
+    if (apiDto.placeId) {
+        apiFetch('/locations', {
+            method: 'POST',
+            body: JSON.stringify(apiDto)
+        }).then(res => {
+            if (res && res.success && res.data && res.data.id) {
+                newLoc.id = res.data.id;
+                persistLocalState();
+            }
+        }).catch(err => console.warn('Background location sync:', err));
     }
 }
 
 // Place / Premise Create Form
 async function handlePlaceFormSubmit(e) {
     e.preventDefault();
-    const dto = {
-        name: document.getElementById('place-name').value,
-        type: parseInt(document.getElementById('place-type').value),
-        address: document.getElementById('place-address').value || null
+    const name = document.getElementById('place-name').value.trim();
+    const type = parseInt(document.getElementById('place-type').value) || 0;
+    const address = document.getElementById('place-address').value || null;
+
+    if (!name) {
+        showToast('Please enter a premise name', 'error');
+        return;
+    }
+
+    const newPlace = {
+        id: `place_${Date.now()}`,
+        name: name,
+        type: type,
+        address: address,
+        isDefault: state.places.length === 0,
+        roomsCount: 0,
+        itemsCount: 0
     };
 
-    const res = await apiFetch('/places', {
-        method: 'POST',
-        body: JSON.stringify(dto)
-    });
+    state.places.push(newPlace);
+    if (!state.activePlaceId) state.activePlaceId = newPlace.id;
+    persistLocalState();
+    updatePlaceSelector();
 
-    if (res.success) {
-        showToast(`Premise "${dto.name}" created!`, 'success');
-        closeModal('modal-place');
-        document.getElementById('place-form').reset();
-        await loadPlaces();
-        updatePlaceSelector();
-    } else {
-        showToast(res.message || 'Failed to create premise', 'error');
-    }
+    showToast(`Premise "${name}" created!`, 'success');
+    closeModal('modal-place');
+    document.getElementById('place-form').reset();
+
+    apiFetch('/places', {
+        method: 'POST',
+        body: JSON.stringify({ name, type, address })
+    }).then(res => {
+        if (res && res.success && res.data && res.data.id) {
+            newPlace.id = res.data.id;
+            persistLocalState();
+        }
+    }).catch(err => console.warn('Background place sync:', err));
 }
 
 // Container Create Form
 async function handleContainerFormSubmit(e) {
     e.preventDefault();
-    const dto = {
-        name: document.getElementById('cnt-name').value,
-        type: document.getElementById('cnt-type').value,
-        locationId: document.getElementById('cnt-location').value,
-        qrCode: document.getElementById('cnt-code').value || null
+    const name = document.getElementById('cnt-name').value.trim();
+    const type = document.getElementById('cnt-type').value;
+    const locationId = document.getElementById('cnt-location').value;
+    const qrCode = document.getElementById('cnt-code').value || `BOX-${Math.floor(100 + Math.random() * 900)}`;
+
+    if (!name) {
+        showToast('Please enter a container name', 'error');
+        return;
+    }
+
+    const newContainer = {
+        id: `cnt_${Date.now()}`,
+        name: name,
+        type: type,
+        locationId: locationId || null,
+        qrToken: qrCode,
+        itemsCount: 0,
+        roomName: (state.rooms.find(r => r.id === locationId) || {}).name || 'Main Room'
     };
 
-    const res = await apiFetch('/containers', {
-        method: 'POST',
-        body: JSON.stringify(dto)
-    });
+    state.containers.unshift(newContainer);
+    persistLocalState();
+    populateContainerDropdowns();
+    updateDashboardCounts();
 
-    if (res.success) {
-        showToast(`Storage box "${dto.name}" created!`, 'success');
-        closeModal('modal-container');
-        document.getElementById('container-form').reset();
-        await loadContainers();
-        renderContainersView();
-    } else {
-        showToast(res.message || 'Failed to create box', 'error');
-    }
+    showToast(`Storage box "${name}" created!`, 'success');
+    closeModal('modal-container');
+    document.getElementById('container-form').reset();
+    renderContainersView();
+
+    const apiDto = {
+        name: name,
+        type: type,
+        locationId: isValidGuid(locationId) ? locationId : null,
+        qrCode: qrCode
+    };
+
+    apiFetch('/containers', {
+        method: 'POST',
+        body: JSON.stringify(apiDto)
+    }).then(res => {
+        if (res && res.success && res.data && res.data.id) {
+            newContainer.id = res.data.id;
+            persistLocalState();
+        }
+    }).catch(err => console.warn('Background container sync:', err));
 }
 
 // Reminder Create Form

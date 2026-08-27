@@ -1,5 +1,5 @@
-// WHERE IS IT — Service Worker
-const CACHE_NAME = 'where-is-it-v2.0';
+// WHERE IS IT — Service Worker v2.2
+const CACHE_NAME = 'where-is-it-v2.2';
 const STATIC_ASSETS = [
     '/',
     '/index.html',
@@ -9,7 +9,15 @@ const STATIC_ASSETS = [
     '/icons/icon.svg',
     '/icons/icon-192.png',
     '/icons/icon-512.png',
-    '/icons/maskable-512.png'
+    '/icons/maskable-512.png',
+    '/css/tokens.css',
+    '/css/layout.css',
+    '/css/components.css',
+    '/css/modals.css',
+    '/css/voice.css',
+    '/css/pwa.css',
+    '/css/mobile.css',
+    '/css/profile.css'
 ];
 
 // Install Event - Pre-cache essential app shell
@@ -39,57 +47,39 @@ self.addEventListener('activate', (event) => {
     );
 });
 
-// Fetch Event - Network First for APIs, Cache First for Static Files
+// Fetch Event - Only cache GET static assets, NEVER intercept or cache POST/PUT/DELETE
 self.addEventListener('fetch', (event) => {
-    const url = new URL(event.request.url);
-
-    // Dynamic API Requests: Network First, Fallback to Cache
-    if (url.pathname.startsWith('/api/')) {
-        event.respondWith(
-            fetch(event.request)
-                .then((networkResponse) => {
-                    if (networkResponse && networkResponse.status === 200 && event.request.method === 'GET') {
-                        const responseClone = networkResponse.clone();
-                        caches.open(CACHE_NAME).then((cache) => {
-                            cache.put(event.request, responseClone);
-                        });
-                    }
-                    return networkResponse;
-                })
-                .catch(() => {
-                    return caches.match(event.request);
-                })
-        );
+    // 1. Never intercept non-GET requests (POST, PUT, DELETE, etc.)
+    if (event.request.method !== 'GET') {
         return;
     }
 
-    // Static Assets: Cache First, Network Fallback
+    const url = new URL(event.request.url);
+
+    // 2. Never cache dynamic backend API requests in Cache Storage
+    if (url.pathname.startsWith('/api/') || url.origin !== self.location.origin) {
+        return;
+    }
+
+    // 3. Static Assets: Stale-While-Revalidate Strategy
     event.respondWith(
         caches.match(event.request).then((cachedResponse) => {
-            if (cachedResponse) {
-                // Return cache and update in background
-                fetch(event.request).then((networkResponse) => {
-                    if (networkResponse && networkResponse.status === 200) {
-                        caches.open(CACHE_NAME).then((cache) => {
-                            cache.put(event.request, networkResponse);
-                        });
-                    }
-                }).catch(() => {});
-                return cachedResponse;
-            }
-            return fetch(event.request).then((networkResponse) => {
-                if (networkResponse && networkResponse.status === 200) {
+            const fetchPromise = fetch(event.request).then((networkResponse) => {
+                if (networkResponse && networkResponse.status === 200 && event.request.method === 'GET') {
                     const responseClone = networkResponse.clone();
                     caches.open(CACHE_NAME).then((cache) => {
                         cache.put(event.request, responseClone);
                     });
                 }
                 return networkResponse;
+            }).catch(() => {
+                // If offline and navigate request, return index.html
+                if (event.request.mode === 'navigate') {
+                    return caches.match('/index.html');
+                }
             });
-        }).catch(() => {
-            if (event.request.mode === 'navigate') {
-                return caches.match('/index.html');
-            }
+
+            return cachedResponse || fetchPromise;
         })
     );
 });
