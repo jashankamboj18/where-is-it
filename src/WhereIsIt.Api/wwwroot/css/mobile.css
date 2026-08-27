@@ -164,46 +164,47 @@
     }
 
     .header-right {
-        gap: 6px;
+        gap: 6px !important;
+        align-items: center !important;
+        flex-shrink: 0 !important;
     }
 
     .theme-switch-btn .theme-text,
     .theme-text,
     .user-name-label,
-    .voice-btn-label {
-        display: none !important;
-    }
-
-    .voice-agent-header-btn {
-        padding: 8px !important;
-        gap: 0 !important;
-        border-radius: 50% !important;
-        width: 38px;
-        height: 38px;
-        justify-content: center;
-    }
-
-    .theme-switch-btn {
-        padding: 8px !important;
-        border-radius: 50% !important;
-        width: 38px;
-        height: 38px;
-        justify-content: center;
-        gap: 0 !important;
-    }
-
+    .voice-btn-label,
+    #btn-add-item-top span:not(.material-symbols-outlined),
     .btn-install-pwa span:not(.material-symbols-outlined) {
         display: none !important;
     }
 
-    .btn-install-pwa {
+    .voice-agent-header-btn,
+    .theme-switch-btn,
+    .btn-install-pwa,
+    #btn-add-item-top,
+    .profile-pill {
+        width: 36px !important;
+        height: 36px !important;
+        min-width: 36px !important;
+        max-width: 36px !important;
+        padding: 0 !important;
+        border-radius: 50% !important;
         display: inline-flex !important;
         align-items: center !important;
         justify-content: center !important;
-        padding: 0 !important;
-        border-radius: 50% !important;
-        width: 38px !important;
-        height: 38px !important;
+        box-sizing: border-box !important;
+        flex-shrink: 0 !important;
+        gap: 0 !important;
+    }
+
+    .voice-agent-header-btn {
+        background: linear-gradient(135deg, #6366F1, #8B5CF6) !important;
+        color: #FFFFFF !important;
+        border: none !important;
+        box-shadow: 0 2px 10px rgba(99, 102, 241, 0.4) !important;
+    }
+
+    .btn-install-pwa {
         background: linear-gradient(135deg, #10B981, #059669) !important;
         color: #FFFFFF !important;
         border: none !important;
@@ -216,9 +217,16 @@
         font-size: 20px !important;
     }
 
+    #btn-add-item-top {
+        background: var(--primary) !important;
+        color: #FFFFFF !important;
+        border: none !important;
+        box-shadow: 0 2px 10px var(--primary-glow) !important;
+    }
+
     .profile-pill {
-        padding: 4px !important;
-        border-radius: 50% !important;
+        background: transparent !important;
+        border: 1px solid var(--border-subtle) !important;
     }
 
     /* Dashboard Hero & Stats */
