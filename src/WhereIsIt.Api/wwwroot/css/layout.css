@@ -4,9 +4,12 @@
 
 html, body {
     height: 100%;
+    width: 100%;
     margin: 0;
     padding: 0;
     overflow: hidden; /* Prevent window bounce; inner container handles scrolling */
+    position: fixed;
+    inset: 0;
     background-color: var(--bg-app);
     color: var(--text-body);
     font-family: var(--font-sans);
@@ -16,10 +19,11 @@ html, body {
 /* -------------------- APPLICATION ROOT -------------------- */
 .app-root {
     display: flex;
-    height: 100dvh;
-    width: 100vw;
+    height: 100%;
+    width: 100%;
     overflow: hidden;
-    position: relative;
+    position: absolute;
+    inset: 0;
 }
 
 /* -------------------- SIDEBAR -------------------- */

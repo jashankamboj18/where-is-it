@@ -47,7 +47,7 @@ function renderItemCardHtml(item, showCheckbox = false) {
             <!-- Structured Location Breadcrumb -->
             <div class="item-path-box" onclick="showItemDetailModal('${item.id}')">
                 <span class="material-symbols-outlined">pin_drop</span>
-                <span>${item.locationPath}</span>
+                <span>${item.locationPath || item.locationName || 'Home Location'}</span>
             </div>
 
             <div class="item-details-row" onclick="showItemDetailModal('${item.id}')">

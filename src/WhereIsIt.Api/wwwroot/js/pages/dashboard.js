@@ -2,6 +2,10 @@
 // pages/dashboard.js — Dashboard View & Control Elements
 // ============================================================
 
+function renderDashboardView() {
+    renderDashboard();
+}
+
 function renderDashboard() {
     const totalEl = document.getElementById('stat-total-items');
     const placesEl = document.getElementById('stat-total-places');

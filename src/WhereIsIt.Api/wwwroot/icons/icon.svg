@@ -1,39 +1,91 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
   <defs>
-    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#1E3A8A"/>
+    <!-- Background Luxury Gradient -->
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0B0F19"/>
+      <stop offset="40%" stop-color="#1E1B4B"/>
+      <stop offset="100%" stop-color="#090D16"/>
+    </linearGradient>
+
+    <!-- Radar Waves Gradient -->
+    <linearGradient id="waveGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#818CF8" stop-opacity="0.1"/>
+    </linearGradient>
+
+    <!-- Pin Vibrant Gradient -->
+    <linearGradient id="pinGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38BDF8"/>
       <stop offset="50%" stop-color="#2563EB"/>
-      <stop offset="100%" stop-color="#06B6D4"/>
+      <stop offset="100%" stop-color="#7C3AED"/>
     </linearGradient>
-    <linearGradient id="orbGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#60A5FA"/>
-      <stop offset="50%" stop-color="#A855F7"/>
-      <stop offset="100%" stop-color="#EC4899"/>
+
+    <!-- Cube Glass Surface Gradient -->
+    <linearGradient id="cubeTop" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#60A5FA" stop-opacity="0.45"/>
+      <stop offset="100%" stop-color="#3B82F6" stop-opacity="0.15"/>
     </linearGradient>
-    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-      <feGaussianBlur stdDeviation="16" result="blur"/>
+    <linearGradient id="cubeLeft" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#2563EB" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#1D4ED8" stop-opacity="0.1"/>
+    </linearGradient>
+    <linearGradient id="cubeRight" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#7C3AED" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#4C1D95" stop-opacity="0.1"/>
+    </linearGradient>
+
+    <!-- Gold Accent Gradient -->
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FDE047"/>
+      <stop offset="100%" stop-color="#F59E0B"/>
+    </linearGradient>
+
+    <!-- Glow Filter -->
+    <filter id="softGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="12" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+    <filter id="strongGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="24" result="blur"/>
       <feComposite in="SourceGraphic" in2="blur" operator="over"/>
     </filter>
   </defs>
+
+  <!-- Squircle App Icon Base -->
+  <rect width="512" height="512" rx="112" fill="url(#bgGradient)"/>
   
-  <!-- Rounded App Icon Background -->
-  <rect width="512" height="512" rx="115" fill="url(#bgGrad)"/>
+  <!-- Subtle Border Rim -->
+  <rect x="2" y="2" width="508" height="508" rx="110" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="3"/>
+
+  <!-- Glowing Radar Concentric Rings -->
+  <circle cx="256" cy="245" r="165" fill="none" stroke="url(#waveGrad)" stroke-width="2" stroke-dasharray="10 8" opacity="0.4"/>
+  <circle cx="256" cy="245" r="125" fill="none" stroke="url(#waveGrad)" stroke-width="2.5" opacity="0.6"/>
+  <circle cx="256" cy="245" r="85" fill="none" stroke="rgba(56, 189, 248, 0.4)" stroke-width="3"/>
+
+  <!-- 3D Isometric Storage Container (Glassmorphic Box Base) -->
+  <g transform="translate(0, 45)">
+    <!-- Top Face -->
+    <polygon points="256,220 376,285 256,350 136,285" fill="url(#cubeTop)" stroke="rgba(147, 197, 253, 0.5)" stroke-width="2"/>
+    <!-- Left Face -->
+    <polygon points="136,285 256,350 256,410 136,345" fill="url(#cubeLeft)" stroke="rgba(96, 165, 250, 0.3)" stroke-width="2"/>
+    <!-- Right Face -->
+    <polygon points="256,350 376,285 376,345 256,410" fill="url(#cubeRight)" stroke="rgba(167, 139, 250, 0.3)" stroke-width="2"/>
+  </g>
+
+  <!-- Glowing Cyan Beacon Aura -->
+  <circle cx="256" cy="205" r="65" fill="#38BDF8" opacity="0.25" filter="url(#strongGlow)"/>
+
+  <!-- Floating Holographic Location Pin -->
+  <path d="M 256 100 C 205 100 164 141 164 192 C 164 255 256 335 256 335 C 256 335 348 255 348 192 C 348 141 307 100 256 100 Z" fill="url(#pinGrad)" filter="url(#softGlow)"/>
   
-  <!-- Outer Pulse Ring -->
-  <circle cx="256" cy="230" r="150" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="8" stroke-dasharray="16 12"/>
-  <circle cx="256" cy="230" r="115" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="6"/>
+  <!-- Pin Inner Core -->
+  <circle cx="256" cy="190" r="38" fill="#FFFFFF" opacity="0.95"/>
+  <circle cx="256" cy="190" r="22" fill="#1E1B4B"/>
   
-  <!-- Central Glowing Finder AI Orb -->
-  <circle cx="256" cy="230" r="80" fill="url(#orbGrad)" filter="url(#glow)"/>
-  
-  <!-- Location Pin Shape -->
-  <path d="M 256 140 C 210 140 174 176 174 222 C 174 278 256 350 256 350 C 256 350 338 278 338 222 C 338 176 302 140 256 140 Z" fill="#FFFFFF" opacity="0.95"/>
-  <circle cx="256" cy="216" r="32" fill="url(#bgGrad)"/>
-  
-  <!-- Search Sparkle Star -->
-  <path d="M 370 120 Q 370 145 395 145 Q 370 145 370 170 Q 370 145 345 145 Q 370 145 370 120 Z" fill="#FACC15" filter="url(#glow)"/>
-  
-  <!-- App Label Banner / Base -->
-  <rect x="96" y="390" width="320" height="60" rx="30" fill="rgba(15, 23, 42, 0.75)"/>
-  <text x="256" y="430" fill="#FFFFFF" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="26" font-weight="900" text-anchor="middle" letter-spacing="4">FINDER AI</text>
+  <!-- Radar Crosshair Core -->
+  <circle cx="256" cy="190" r="7" fill="#38BDF8" filter="url(#softGlow)"/>
+
+  <!-- AI Discovery Sparkle Stars -->
+  <path d="M 375 110 Q 375 130 395 130 Q 375 130 375 150 Q 375 130 355 130 Q 375 130 375 110 Z" fill="url(#goldGrad)" filter="url(#softGlow)"/>
+  <path d="M 130 155 Q 130 168 143 168 Q 130 168 130 181 Q 130 168 117 168 Q 130 168 130 155 Z" fill="#38BDF8" opacity="0.85"/>
 </svg>

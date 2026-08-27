@@ -2,7 +2,7 @@
 // api.js — HTTP Client with Real-Time Offline Cache & Sync
 // ============================================================
 
-// Base API Request Helper
+// Base API Request Helper with Fast Timeout & Offline Fallback
 async function apiFetch(endpoint, options = {}) {
     const headers = {
         'Content-Type': 'application/json',
@@ -10,11 +10,16 @@ async function apiFetch(endpoint, options = {}) {
         ...options.headers
     };
 
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), options.timeout || 4000);
+
     try {
         const response = await fetch(`${API_BASE}${endpoint}`, {
             ...options,
-            headers
+            headers,
+            signal: controller.signal
         });
+        clearTimeout(timeoutId);
 
         if (!response.ok && response.status === 401) {
             console.warn('Session expired or unauthorized');
@@ -24,7 +29,8 @@ async function apiFetch(endpoint, options = {}) {
 
         return await response.json();
     } catch (err) {
-        console.warn(`Network request to ${endpoint} failed, falling back to local device storage:`, err);
+        clearTimeout(timeoutId);
+        console.warn(`Network request to ${endpoint} timed out or failed, falling back to local device storage:`, err);
         return handleOfflineFallback(endpoint, options);
     }
 }

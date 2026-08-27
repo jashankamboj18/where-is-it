@@ -86,13 +86,33 @@
 
     /* App Layout */
     .app-root {
-        flex-direction: column;
+        position: fixed !important;
+        inset: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        overflow: hidden !important;
+        display: flex !important;
+        flex-direction: column !important;
+    }
+
+    .app-main {
+        width: 100% !important;
+        height: 100% !important;
+        flex: 1 1 0 !important;
+        min-height: 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        overflow: hidden !important;
     }
 
     /* Mobile Content Container Bottom Padding */
     .app-content-container {
+        flex: 1 1 0 !important;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch !important;
         padding: 14px 12px 90px 12px !important;
-        max-width: 100%;
+        width: 100% !important;
+        box-sizing: border-box !important;
     }
 
     /* Show Mobile Bottom Nav */

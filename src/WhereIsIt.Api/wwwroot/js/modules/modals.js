@@ -66,21 +66,54 @@ async function handleItemFormSubmit(e) {
         isImportant: document.getElementById('item-important').checked
     };
 
-    const res = await apiFetch('/items', {
+    const room = state.rooms.find(r => r.id === dto.locationId) || state.locations.find(l => l.id === dto.locationId) || { name: 'Home' };
+    const cat = state.categories.find(c => c.id === dto.categoryId) || { name: 'General', colorHex: '#2563EB', icon: 'inventory_2' };
+    const container = state.containers.find(c => c.id === dto.containerId);
+
+    const newItem = {
+        id: `item_${Date.now()}`,
+        name: dto.name,
+        categoryId: dto.categoryId,
+        locationId: dto.locationId,
+        containerId: dto.containerId,
+        condition: dto.condition,
+        brand: dto.brand,
+        serialNumber: dto.serialNumber,
+        purchaseDate: dto.purchaseDate,
+        purchasePrice: dto.purchasePrice,
+        quantity: dto.quantity,
+        description: dto.description,
+        isImportant: dto.isImportant,
+        locationName: room.name || 'Main Room',
+        containerName: container ? container.name : null,
+        categoryName: cat.name || 'General',
+        categoryColor: cat.colorHex || '#2563EB',
+        categoryIcon: cat.icon || 'inventory_2',
+        updatedAt: new Date().toISOString()
+    };
+
+    // 1. Immediate 0ms local state update
+    state.items.unshift(newItem);
+    persistLocalState();
+    updateDashboardCounts();
+
+    showToast(`"${dto.name}" saved in ${newItem.locationName}!`, 'success');
+    closeModal('modal-item');
+    document.getElementById('item-form').reset();
+
+    if (state.currentTab === 'dashboard') renderDashboardView();
+    if (state.currentTab === 'items') renderAllItemsView();
+
+    // 2. Background API sync (non-blocking)
+    apiFetch('/items', {
         method: 'POST',
         body: JSON.stringify(dto)
-    });
-
-    if (res.success) {
-        showToast(`Item "${dto.name}" saved!`, 'success');
-        closeModal('modal-item');
-        document.getElementById('item-form').reset();
-        await loadItems();
-        renderDashboard();
-        renderAllItemsView();
-    } else {
-        showToast(res.message || 'Failed to save item', 'error');
-    }
+    }).then(res => {
+        if (res && res.success && res.data && res.data.id) {
+            newItem.id = res.data.id;
+            persistLocalState();
+        }
+    }).catch(err => console.warn('Background item sync:', err));
 }
 
 // Lent Form
