@@ -185,7 +185,7 @@ async function loadRooms() {
     const res = await apiFetch(`/places/${state.activePlaceId}/rooms`);
     if (res && res.success) {
         state.rooms = res.data || [];
-        populateRoomDropdowns();
+        if (typeof populateLocationDropdowns === 'function') populateLocationDropdowns();
     }
 }
 

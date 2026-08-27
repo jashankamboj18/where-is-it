@@ -129,7 +129,7 @@ function setupAuthModalEvents() {
                     showToast(`Welcome back, ${state.user.firstName || 'User'}!`, 'success');
                     await loadInitialData();
                 } else {
-                    showToast(data.message || 'Invalid email or password', 'error');
+                    showToast(data.message || 'Account not found. Click "Create Account" tab to register!', 'error');
                 }
             } catch (err) {
                 console.error('Login error:', err);

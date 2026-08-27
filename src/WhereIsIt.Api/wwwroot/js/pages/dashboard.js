@@ -6,6 +6,10 @@ function renderDashboardView() {
     renderDashboard();
 }
 
+function updateDashboardCounts() {
+    renderDashboard();
+}
+
 function renderDashboard() {
     const totalEl = document.getElementById('stat-total-items');
     const placesEl = document.getElementById('stat-total-places');
@@ -131,6 +135,10 @@ function renderCategoryPills() {
             renderAllItemsView();
         });
     });
+}
+
+function populateRoomDropdowns() {
+    populateLocationDropdowns();
 }
 
 function populateLocationDropdowns() {

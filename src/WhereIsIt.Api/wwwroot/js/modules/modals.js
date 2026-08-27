@@ -242,13 +242,12 @@ async function handleLocationFormSubmit(e) {
     state.locations.push(newLoc);
     state.rooms.push(newLoc);
     persistLocalState();
-    populateRoomDropdowns();
-    populateLocationDropdowns();
+    if (typeof populateLocationDropdowns === 'function') populateLocationDropdowns();
 
     showToast(`Location "${nameVal}" created!`, 'success');
     closeModal('modal-location');
     document.getElementById('location-form').reset();
-    renderLocationTree();
+    if (typeof renderLocationTree === 'function') renderLocationTree();
 
     // 2. Background API sync
     const apiDto = {

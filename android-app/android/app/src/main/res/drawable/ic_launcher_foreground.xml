@@ -1,0 +1,73 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    
+    <!-- Outer Radar Rings -->
+    <path
+        android:pathData="M54,18 A36,36 0 1,1 53.9,18"
+        android:strokeWidth="1.5"
+        android:strokeColor="#38BDF8"
+        android:strokeAlpha="0.35"/>
+    <path
+        android:pathData="M54,26 A28,28 0 1,1 53.9,26"
+        android:strokeWidth="1.5"
+        android:strokeColor="#38BDF8"
+        android:strokeAlpha="0.5"/>
+
+    <!-- 3D Storage Box Bottom Plate -->
+    <path
+        android:pathData="M54,58 L78,71 L54,84 L30,71 Z"
+        android:strokeWidth="1"
+        android:strokeColor="#60A5FA">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="30"
+                android:startY="58"
+                android:endX="78"
+                android:endY="84"
+                android:type="linear">
+                <item android:color="#553B82F6" android:offset="0.0"/>
+                <item android:color="#221D4ED8" android:offset="1.0"/>
+            </gradient>
+        </aapt:attr>
+    </path>
+    <path
+        android:pathData="M30,71 L54,84 L54,94 L30,81 Z"
+        android:fillColor="#332563EB"/>
+    <path
+        android:pathData="M54,84 L78,71 L78,81 L54,94 Z"
+        android:fillColor="#337C3AED"/>
+
+    <!-- Glowing Finder Locator Pin -->
+    <path
+        android:pathData="M54,22 C43,22 34,31 34,42 C34,55 54,72 54,72 C54,72 74,55 74,42 C74,31 65,22 54,22 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="34"
+                android:startY="22"
+                android:endX="74"
+                android:endY="72"
+                android:type="linear">
+                <item android:color="#38BDF8" android:offset="0.0"/>
+                <item android:color="#2563EB" android:offset="0.6"/>
+                <item android:color="#7C3AED" android:offset="1.0"/>
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Pin Inner Core -->
+    <path
+        android:pathData="M54,42 A8,8 0 1,1 53.9,42"
+        android:fillColor="#FFFFFF"/>
+    <path
+        android:pathData="M54,42 A4.5,4.5 0 1,1 53.9,42"
+        android:fillColor="#0F172A"/>
+
+    <!-- Discovery Star Accent -->
+    <path
+        android:pathData="M78,25 Q78,29 82,29 Q78,29 78,33 Q78,29 74,29 Q78,29 78,25 Z"
+        android:fillColor="#FBBF24"/>
+</vector>
