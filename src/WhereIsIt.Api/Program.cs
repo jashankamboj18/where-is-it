@@ -14,6 +14,9 @@ using WhereIsIt.Infrastructure.Data;
 using WhereIsIt.Infrastructure.Services;
 using WhereIsIt.Shared.Models;
 
+Environment.SetEnvironmentVariable("DOTNET_USE_POLLING_FILE_WATCHER", "1");
+Environment.SetEnvironmentVariable("DOTNET_EnableDiagnostics", "0");
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add Database Context (Auto-detects SQL Server or cloud SQLite)

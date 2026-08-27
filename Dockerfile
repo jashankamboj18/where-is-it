@@ -24,9 +24,11 @@ FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
 WORKDIR /app
 COPY --from=build /app/publish .
 
-# Set environment variables
+# Set environment variables (prevent inotify limit in shared Linux cloud containers)
 ENV ASPNETCORE_URLS=http://+:8080
 ENV ASPNETCORE_ENVIRONMENT=Production
+ENV DOTNET_USE_POLLING_FILE_WATCHER=1
+ENV DOTNET_EnableDiagnostics=0
 EXPOSE 8080
 
 ENTRYPOINT ["dotnet", "WhereIsIt.Api.dll"]

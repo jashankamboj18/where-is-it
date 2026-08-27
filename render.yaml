@@ -11,3 +11,7 @@ services:
         value: Production
       - key: ASPNETCORE_URLS
         value: http://+:8080
+      - key: DOTNET_USE_POLLING_FILE_WATCHER
+        value: "true"
+      - key: DOTNET_EnableDiagnostics
+        value: "0"
