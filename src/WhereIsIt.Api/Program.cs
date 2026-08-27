@@ -21,7 +21,13 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add Database Context (Auto-detects SQL Server or cloud SQLite)
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-var isSqlServer = !string.IsNullOrEmpty(connectionString) && (connectionString.Contains("Server=") || connectionString.Contains("database.windows.net") || connectionString.Contains("Trusted_Connection="));
+var isRenderOrCloud = !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("RENDER")) 
+                      || !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("PORT"))
+                      || builder.Environment.IsProduction();
+
+var isSqlServer = !isRenderOrCloud 
+                  && !string.IsNullOrEmpty(connectionString) 
+                  && !connectionString.Contains("WhereIsIt.db");
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {

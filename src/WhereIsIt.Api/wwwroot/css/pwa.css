@@ -1,28 +1,28 @@
-﻿   PWA ANDROID INSTALL â€” Banner & Header Install Button
+/* ==========================================================================
+   pwa.css — PWA Android Install Banner & Header Button Styles
    ========================================================================== */
 
 /* Header "Install App" Button */
 .btn-install-pwa {
-    display: none;
+    display: inline-flex;
     align-items: center;
     gap: 6px;
     padding: 7px 14px;
     background: linear-gradient(135deg, #10B981, #059669);
-    color: #FFFFFF;
+    color: #FFFFFF !important;
     border: none;
-    border-radius: 50px;
-    font-size: 0.78rem;
+    border-radius: var(--radius-full, 50px);
+    font-size: 0.8rem;
     font-weight: 700;
     cursor: pointer;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
-    box-shadow: 0 2px 12px rgba(16, 185, 129, 0.35);
+    box-shadow: 0 2px 10px rgba(16, 185, 129, 0.35);
     white-space: nowrap;
-    letter-spacing: 0.3px;
 }
 
 .btn-install-pwa:hover {
     transform: translateY(-1px);
-    box-shadow: 0 4px 20px rgba(16, 185, 129, 0.5);
+    box-shadow: 0 4px 16px rgba(16, 185, 129, 0.5);
 }
 
 .btn-install-pwa .material-symbols-outlined {
@@ -50,61 +50,58 @@
 .pwa-banner-content {
     display: flex;
     align-items: center;
-    gap: 12px;
+    justify-content: space-between;
     padding: 14px 20px;
-    max-width: 600px;
+    max-width: 900px;
     margin: 0 auto;
+    gap: 16px;
 }
 
 .pwa-banner-icon {
     width: 44px;
     height: 44px;
     border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     flex-shrink: 0;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.3);
 }
 
 .pwa-banner-text {
     flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
+    color: white;
 }
 
 .pwa-banner-text strong {
-    font-size: 0.9rem;
+    display: block;
+    font-size: 0.95rem;
     font-weight: 700;
-    color: #FFFFFF;
-    letter-spacing: 0.2px;
+    margin-bottom: 2px;
 }
 
 .pwa-banner-text span {
-    font-size: 0.75rem;
-    color: rgba(255, 255, 255, 0.75);
-    font-weight: 500;
+    font-size: 0.78rem;
+    opacity: 0.85;
 }
 
 .pwa-banner-install-btn {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 9px 18px;
     background: #FFFFFF;
     color: #1D4ED8;
     border: none;
-    border-radius: 50px;
-    font-size: 0.82rem;
-    font-weight: 800;
+    border-radius: 8px;
+    padding: 9px 18px;
+    font-size: 0.85rem;
+    font-weight: 700;
     cursor: pointer;
-    white-space: nowrap;
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    transition: transform 0.2s, box-shadow 0.2s;
     flex-shrink: 0;
 }
 
 .pwa-banner-install-btn:hover {
-    transform: scale(1.04);
-    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    transform: scale(1.03);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.3);
 }
 
 .pwa-banner-install-btn .material-symbols-outlined {
@@ -112,39 +109,39 @@
 }
 
 .pwa-banner-dismiss-btn {
-    background: rgba(255,255,255,0.15);
+    background: transparent;
     border: none;
+    color: rgba(255,255,255,0.7);
+    cursor: pointer;
+    padding: 6px;
     border-radius: 50%;
-    width: 32px;
-    height: 32px;
     display: flex;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
-    color: rgba(255,255,255,0.8);
-    transition: background 0.2s ease;
+    transition: color 0.2s;
     flex-shrink: 0;
 }
 
 .pwa-banner-dismiss-btn:hover {
-    background: rgba(255,255,255,0.25);
-    color: #FFFFFF;
+    color: white;
+    background: rgba(255,255,255,0.1);
 }
 
-.pwa-banner-dismiss-btn .material-symbols-outlined {
-    font-size: 18px;
+/* Offline Indicator */
+#offline-indicator {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: #EF4444;
+    color: white;
+    text-align: center;
+    padding: 6px 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    z-index: 10000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
 }
-
-/* Mobile: full width bottom banner */
-@media (max-width: 500px) {
-    .pwa-banner-content {
-        padding: 12px 16px;
-        gap: 10px;
-    }
-    .pwa-banner-install-btn {
-        padding: 8px 14px;
-        font-size: 0.78rem;
-    }
-}
-
-
