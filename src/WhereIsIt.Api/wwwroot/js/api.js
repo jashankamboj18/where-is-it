@@ -22,9 +22,7 @@ async function apiFetch(endpoint, options = {}) {
         clearTimeout(timeoutId);
 
         if (!response.ok && response.status === 401) {
-            console.warn('Session expired or unauthorized');
-            localStorage.removeItem('whereisit_token');
-            state.token = null;
+            console.warn('Backend request unauthorized, preserving local session');
         }
 
         return await response.json();

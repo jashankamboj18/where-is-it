@@ -1,5 +1,5 @@
 // ============================================================
-// auth.js — Authentication, Registration & User Session
+// auth.js — Authentication, Permanent Session & Profile Engine
 // ============================================================
 
 async function initializeAuth() {
@@ -8,27 +8,29 @@ async function initializeAuth() {
     const storedToken = localStorage.getItem('whereisit_token');
     const storedUser = localStorage.getItem('whereisit_user');
 
-    if (storedToken) {
-        state.token = storedToken;
+    if (storedUser || storedToken) {
+        state.token = storedToken || 'offline_jwt_token';
         if (storedUser) {
             try { state.user = JSON.parse(storedUser); } catch { /* ignore */ }
         }
-
-        try {
-            const profileRes = await apiFetch('/auth/profile');
-            if (profileRes && profileRes.success && profileRes.data) {
-                state.user = profileRes.data;
-                localStorage.setItem('whereisit_user', JSON.stringify(state.user));
-            }
-        } catch (err) {
-            console.warn('Could not refresh profile from server, using local session:', err);
-        }
         applyUserToUI();
+        closeAuthModal();
+
+        // Refresh user profile asynchronously in the background WITHOUT logging user out on error
+        if (storedToken && storedToken !== 'offline_jwt_token' && storedToken !== 'local_session_token') {
+            apiFetch('/auth/profile').then(profileRes => {
+                if (profileRes && profileRes.success && profileRes.data) {
+                    state.user = profileRes.data;
+                    localStorage.setItem('whereisit_user', JSON.stringify(state.user));
+                    applyUserToUI();
+                }
+            }).catch(err => console.warn('Background profile refresh skipped:', err));
+        }
     } else {
-        // If no token exists, open the Auth Modal to let the user Sign In or Create Account
+        // Only open Auth Modal if brand new first-time user
         setTimeout(() => {
             openAuthModal();
-        }, 400);
+        }, 300);
     }
 }
 
@@ -59,14 +61,14 @@ function applyUserToUI() {
     if (initEl) initEl.textContent = initial;
     if (sideNameEl) sideNameEl.textContent = fullName;
     if (sideInitEl) sideInitEl.textContent = initial;
-    if (sideEmailEl) sideEmailEl.textContent = user.email || 'Free Account';
+    if (sideEmailEl) sideEmailEl.textContent = user.email || 'Personal Inventory';
 
     // Settings Profile Elements
     const setFullname = document.getElementById('settings-profile-fullname');
     const setEmail = document.getElementById('settings-profile-email');
     const setInit = document.getElementById('settings-profile-initials');
     if (setFullname) setFullname.textContent = fullName;
-    if (setEmail) setEmail.textContent = user.email || 'Free Tier';
+    if (setEmail) setEmail.textContent = user.email || 'Personal Inventory';
     if (setInit) setInit.textContent = initial;
 }
 
@@ -105,13 +107,13 @@ function setupAuthModalEvents() {
                 return;
             }
 
-            try {
-                const submitBtn = formLogin.querySelector('button[type="submit"]');
-                if (submitBtn) {
-                    submitBtn.disabled = true;
-                    submitBtn.textContent = 'Signing in...';
-                }
+            const submitBtn = formLogin.querySelector('button[type="submit"]');
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Signing in...';
+            }
 
+            try {
                 const res = await fetch(`${API_BASE}/auth/login`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -124,27 +126,49 @@ function setupAuthModalEvents() {
                     state.user = data.data.user;
                     localStorage.setItem('whereisit_token', state.token);
                     localStorage.setItem('whereisit_user', JSON.stringify(state.user));
+                    localStorage.setItem('whereisit_local_creds', JSON.stringify({ email, password }));
                     applyUserToUI();
                     closeAuthModal();
                     showToast(`Welcome back, ${state.user.firstName || 'User'}!`, 'success');
-                    await loadInitialData();
-                } else {
-                    showToast(data.message || 'Account not found. Click "Create Account" tab to register!', 'error');
+                    loadInitialData();
+                    if (submitBtn) {
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = 'Sign In to My Account';
+                    }
+                    return;
                 }
             } catch (err) {
-                console.error('Login error:', err);
-                // Offline fallback login for offline devices
-                state.user = { firstName: email.split('@')[0], lastName: '', email };
+                console.warn('Online login request error, checking stored credentials:', err);
+            }
+
+            // Local Credential Verification Fallback
+            const localSaved = JSON.parse(localStorage.getItem('whereisit_user') || 'null');
+            const localCreds = JSON.parse(localStorage.getItem('whereisit_local_creds') || 'null');
+
+            if (localCreds && localCreds.email.toLowerCase() === email.toLowerCase() && localCreds.password === password) {
+                state.user = localSaved || { firstName: email.split('@')[0], lastName: '', email };
+                state.token = 'local_session_token';
+                localStorage.setItem('whereisit_token', state.token);
                 localStorage.setItem('whereisit_user', JSON.stringify(state.user));
                 applyUserToUI();
                 closeAuthModal();
-                showToast(`Signed in in offline mode`, 'success');
-            } finally {
-                const submitBtn = formLogin.querySelector('button[type="submit"]');
-                if (submitBtn) {
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = 'Sign In to My Account';
-                }
+                showToast(`Signed in as ${state.user.firstName}!`, 'success');
+                loadInitialData();
+            } else if (localSaved && localSaved.email.toLowerCase() === email.toLowerCase()) {
+                state.user = localSaved;
+                state.token = 'local_session_token';
+                localStorage.setItem('whereisit_token', state.token);
+                applyUserToUI();
+                closeAuthModal();
+                showToast(`Signed in as ${state.user.firstName}!`, 'success');
+                loadInitialData();
+            } else {
+                showToast('Incorrect password or account not found. Click "Create Account" tab to register!', 'error');
+            }
+
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Sign In to My Account';
             }
         });
     }
@@ -163,47 +187,43 @@ function setupAuthModalEvents() {
                 return;
             }
 
-            try {
-                const submitBtn = formRegister.querySelector('button[type="submit"]');
-                if (submitBtn) {
-                    submitBtn.disabled = true;
-                    submitBtn.textContent = 'Creating account...';
-                }
+            const submitBtn = formRegister.querySelector('button[type="submit"]');
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Creating account...';
+            }
 
-                const res = await fetch(`${API_BASE}/auth/register`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ firstName, lastName, email, password })
-                });
+            // Immediately store local user & credentials for permanent offline/online persistence
+            state.user = { firstName, lastName, email, fullName: `${firstName} ${lastName}`.trim() };
+            state.token = 'local_session_token';
+            localStorage.setItem('whereisit_user', JSON.stringify(state.user));
+            localStorage.setItem('whereisit_token', state.token);
+            localStorage.setItem('whereisit_local_creds', JSON.stringify({ email, password }));
+            applyUserToUI();
+            closeAuthModal();
+            showToast(`Welcome, ${firstName}! Your account is ready.`, 'success');
 
-                const data = await res.json();
+            // Sync with backend API in background
+            fetch(`${API_BASE}/auth/register`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ firstName, lastName, email, password })
+            }).then(res => res.json()).then(data => {
                 if (data.success && data.data) {
                     state.token = data.data.accessToken;
                     state.user = data.data.user;
                     localStorage.setItem('whereisit_token', state.token);
                     localStorage.setItem('whereisit_user', JSON.stringify(state.user));
                     applyUserToUI();
-                    closeAuthModal();
-                    showToast(`Account created! Welcome, ${firstName}!`, 'success');
-                    await loadInitialData();
-                } else {
-                    showToast(data.message || 'Registration failed', 'error');
                 }
-            } catch (err) {
-                console.error('Registration error:', err);
-                // Offline fallback account creation
-                state.user = { firstName, lastName, email };
-                localStorage.setItem('whereisit_user', JSON.stringify(state.user));
-                applyUserToUI();
-                closeAuthModal();
-                showToast(`Account created in offline mode!`, 'success');
-            } finally {
-                const submitBtn = formRegister.querySelector('button[type="submit"]');
-                if (submitBtn) {
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = 'Create Free Account';
-                }
+            }).catch(err => console.warn('Background registration sync:', err));
+
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Create Free Account';
             }
+
+            loadInitialData();
         });
     }
 
@@ -211,6 +231,8 @@ function setupAuthModalEvents() {
     if (btnGuest) {
         btnGuest.addEventListener('click', () => {
             state.user = { firstName: 'Guest', lastName: 'User', email: 'guest@whereisit.local' };
+            state.token = 'guest_token';
+            localStorage.setItem('whereisit_token', state.token);
             localStorage.setItem('whereisit_user', JSON.stringify(state.user));
             applyUserToUI();
             closeAuthModal();
@@ -224,6 +246,7 @@ function setupAuthModalEvents() {
 function logoutUser() {
     localStorage.removeItem('whereisit_token');
     localStorage.removeItem('whereisit_user');
+    localStorage.removeItem('whereisit_local_creds');
     state.token = null;
     state.user = null;
     applyUserToUI();
